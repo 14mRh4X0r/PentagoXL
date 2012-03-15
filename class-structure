@@ -1,0 +1,25 @@
+interface Speler
+abstract class AI extends Client
+abstract class NetHandler
+
+class Spel
+- Speler[2-4]
+- class Bord
+  - class Hok[9]
+    - enum Veld[9]
+
+class Client implements Speler
+- class NetHandlerClient: NetHandler
+
+class Server
+ - Spel[]
+ - Client[]
+   - NetHandlerServerClient: NetHandler
+     - Client
+     
+Packages:
+- pentagoxl: abstract class NetHandler, class Client
+  - client: class GUI, class GUI.Controller, class NetHandlerClient
+  - server: class Server, class NetHandlerServerClient, class NetHandlerServerSpel
+  - spel: class Spel, class Bord, class Hok, enum Veld, interface Speler
+  - ai: abstract class AI, class AIImplementation(?)
