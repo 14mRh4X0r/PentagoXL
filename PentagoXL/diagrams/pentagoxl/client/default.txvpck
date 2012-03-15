@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodeSet version="1.0">
+    <view uin="id78vsygztx6wfcgztxbtac">
+        <property name="$metaclass" value="Package Diagram"/>
+        <property name="@__options" value=""/>
+        <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.client.GUI">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="38,26,83,130"/>
+        </reference>
+        <reference df-class-name="reference7" referencedUin="jdt:e_class:src:pentagoxl.client.NetHandlerClient">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="159,32,107,98"/>
+        </reference>
+        <property name="$defaultDiagram" value=""/>
+    </view>
+</nodeSet>

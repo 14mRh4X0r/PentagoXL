@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodeSet version="1.0">
+    <view uin="idfx4wjgztx6wfcgztx6x7y">
+        <property name="$metaclass" value="Package Diagram"/>
+        <property name="@__options" value=""/>
+        <reference df-class-name="reference" referencedUin="design:view:::id7qxscgztx6wfcgztx8ams">
+            <property name="$shortcutReference" value="true"/>
+            <property name="@__fqn" value="uml:package:PentagoXL:src:pentagoxl"/>
+            <property name="bounds" value="54,19,84,177"/>
+        </reference>
+        <property name="$defaultDiagram" value=""/>
+    </view>
+</nodeSet>

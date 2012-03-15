@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodeSet version="1.0">
+    <view uin="idgv1qugztx6wfcgztxcwci">
+        <property name="$metaclass" value="Package Diagram"/>
+        <property name="@__options" value=""/>
+        <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.ai.AI">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="51,26,83,98"/>
+        </reference>
+        <reference df-class-name="reference10" referencedUin="jdt:e_class:src:pentagoxl.ai.AIImplementation">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="207,35,111,82"/>
+            <reference referencedUin="jdt:l_gnt:src:pentagoxl.ai.AIImplementation:pentagoxl.ai.AI">
+                <property name="sourceAnchor" value="207,76"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="134,76"/>
+            </reference>
+        </reference>
+        <property name="$defaultDiagram" value=""/>
+    </view>
+</nodeSet>

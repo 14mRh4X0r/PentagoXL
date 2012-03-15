@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodeSet version="1.0">
+    <view uin="id7qxscgztx6wfcgztx8ams">
+        <property name="$metaclass" value="Package Diagram"/>
+        <property name="@__options" value=""/>
+        <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.NetHandler">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="10,10,83,82"/>
+        </reference>
+        <reference df-class-name="reference2" referencedUin="jdt:e_class:src:pentagoxl.Client">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="113,10,83,98"/>
+        </reference>
+        <reference df-class-name="reference3" referencedUin="design:view:::id78vsygztx6wfcgztxbtac">
+            <property name="$shortcutReference" value="true"/>
+            <property name="@__fqn" value="uml:package:PentagoXL:src:pentagoxl.client"/>
+            <property name="bounds" value="10,130,116,120"/>
+        </reference>
+        <reference df-class-name="reference4" referencedUin="design:view:::idc9htfgztx6wfcgztxc5bo">
+            <property name="$shortcutReference" value="true"/>
+            <property name="@__fqn" value="uml:package:PentagoXL:src:pentagoxl.server"/>
+            <property name="bounds" value="216,10,119,120"/>
+        </reference>
+        <reference df-class-name="reference5" referencedUin="design:view:::id8d1i2gztx6wfcgztxcmoz">
+            <property name="$shortcutReference" value="true"/>
+            <property name="@__fqn" value="uml:package:PentagoXL:src:pentagoxl.spel"/>
+            <property name="bounds" value="10,270,83,168"/>
+        </reference>
+        <reference df-class-name="reference6" referencedUin="design:view:::idgv1qugztx6wfcgztxcwci">
+            <property name="$shortcutReference" value="true"/>
+            <property name="@__fqn" value="uml:package:PentagoXL:src:pentagoxl.ai"/>
+            <property name="bounds" value="190,150,117,120"/>
+        </reference>
+        <property name="$defaultDiagram" value=""/>
+    </view>
+</nodeSet>

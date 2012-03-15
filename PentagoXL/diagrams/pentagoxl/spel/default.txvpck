@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodeSet version="1.0">
+    <view uin="id8d1i2gztx6wfcgztxcmoz">
+        <property name="$metaclass" value="Package Diagram"/>
+        <property name="@__options" value=""/>
+        <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.spel.Spel">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="0,50,104,165"/>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.spel.Spel:bord">
+                <property name="sourceAnchor" value="104,126"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="130,126"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference11" referencedUin="jdt:e_class:src:pentagoxl.spel.Bord">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="130,60,158,133"/>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.spel.Bord:hokken">
+                <property name="sourceAnchor" value="288,118"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="314,118"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference12" referencedUin="jdt:e_class:src:pentagoxl.spel.Hok">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="314,59,102,117"/>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.spel.Hok:velden">
+                <property name="sourceAnchor" value="416,110"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="449,110"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference13" referencedUin="jdt:e_class:src:pentagoxl.spel.Veld">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="449,69,83,82"/>
+        </reference>
+        <reference df-class-name="reference15" referencedUin="jdt:e_class:src:pentagoxl.spel.Speler">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="600,60,161,158"/>
+            <reference referencedUin="jdt:e_field:src:pentagoxl.spel.Speler.knikkers">
+                <property name="bounds" value="20,120,139,16"/>
+            </reference>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.spel.Speler:VELD">
+                <property name="sourceAnchor" value="600,110"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="532,110"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference16" referencedUin="design:node:::id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="430,230,134,40"/>
+            <reference referencedUin="design:link:::id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf.linkidbnsfcgztx6wfcgztzfmg0:id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf">
+                <property name="sourceAnchor" value="490,230"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="490,151"/>
+            </reference>
+        </reference>
+        <property name="$defaultDiagram" value=""/>
+    </view>
+    <node uin="id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf">
+        <property name="$metaclass" value="Note"/>
+        <property name="$name" value="Note1"/>
+        <property name="$note_text" value="Stiekem een enum"/>
+        <link uin="id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf.linkidbnsfcgztx6wfcgztzfmg0">
+            <property name="$metaclass" value="Note Link"/>
+            <participant role="Supplier" referencedUin="jdt:e_class:src:pentagoxl.spel.Veld"/>
+            <participant role="Client" referencedUin="design:node:::id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf"/>
+        </link>
+    </node>
+</nodeSet>
