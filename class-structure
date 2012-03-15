@@ -20,6 +20,6 @@ class Server
 Packages:
 - pentagoxl: abstract class NetHandler, class Client
   - client: class GUI, class GUI.Controller, class NetHandlerClient
-  - server: class Server, class NetHandlerServerClient, class NetHandlerServerSpel
+  - server: class Server, class NetHandlerServer
   - spel: class Spel, class Bord, class Hok, enum Veld, interface Speler
   - ai: abstract class AI, class AIImplementation(?)
