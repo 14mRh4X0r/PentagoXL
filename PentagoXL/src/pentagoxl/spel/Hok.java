@@ -3,7 +3,7 @@
 package pentagoxl.spel;
 
 public class Hok {
-    public Veld getVelden(int index){ return velden[index]; }
+    public Veld getVeld(int index){ return velden[index]; }
 
     public Veld[] getVelden(){ return velden; }
 

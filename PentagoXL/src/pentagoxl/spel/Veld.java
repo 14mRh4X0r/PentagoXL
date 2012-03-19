@@ -2,5 +2,6 @@
 
 package pentagoxl.spel;
 
-public class Veld {
+public enum Veld {
+    ROOD, GEEL, GROEN, BLAUW, LEEG
 }
