@@ -1,1 +1,5 @@
 .metadata/
+nbproject/
+bin/
+build.xml
+*.class
