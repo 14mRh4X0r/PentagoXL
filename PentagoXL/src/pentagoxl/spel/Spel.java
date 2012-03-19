@@ -7,9 +7,9 @@ import java.util.Observable;
 public class Spel extends Observable {
     public Bord getBord() { return bord; }
 
-    public List getSpelers(){ return spelers; }
+    public List<Speler> getSpelers(){ return spelers; }
 
-    public void setSpelers(List spelers){ this.spelers = spelers; }
+    public void setSpelers(List<Speler> spelers){ this.spelers = spelers; }
 
     public boolean isOver() {
     	return false;
@@ -19,5 +19,5 @@ public class Spel extends Observable {
     }
 
     private Bord bord;
-    private List spelers;
+    private List<Speler> spelers;
 }

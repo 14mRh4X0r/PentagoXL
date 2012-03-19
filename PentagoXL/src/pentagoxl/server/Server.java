@@ -3,21 +3,33 @@
 package pentagoxl.server;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.ServerSocket;
+import java.util.Iterator;
+import java.util.List;
+
+import pentagoxl.*;
 
 public class Server extends Thread {
     
-	private boolean stop = false;
-	private int port;
-	private ServerSocket servSock;
+	private static boolean stop = false;
+	private static int port;
+	private static ServerSocket servSock;
+	private static List<Client> clientList;
+	private static Server instance;
 	
 	public Server (int port) {
-		this.port = port;
+		if (Server.instance != null) throw new IllegalStateException("I already exist somewhere!");
+		Server.port = port;
 	}
 	
 	public static void main(String[] args) {
-		Server myServer = new Server(Integer.parseInt(args[0]));
-		myServer.start();
+		try {
+			instance = new Server(Integer.parseInt(args[0]));
+			instance.start();
+		} catch (NumberFormatException e) {
+			System.out.println("Enter a valid port number!");
+			System.exit(1);
+		}
     }
 
     public void run() {
@@ -29,7 +41,20 @@ public class Server extends Thread {
 			System.exit(1);
 		}
 		while (!stop){
-			
+			try {
+				clientList.add(new ServerClient(new NetHandler(servSock.accept())));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+    }
+    
+    public static void killClient(NetHandler handler) {
+    	if (clientList.isEmpty()) throw new IllegalArgumentException("There are no clients, wtf dude");
+    	Iterator<Client> it = clientList.iterator();
+    	Client c = it.next();
+    	for (; it.hasNext(); c = it.next())
+    		if (c.HANDLER == handler)
+    			it.remove();
     }
 }

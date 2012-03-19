@@ -2,22 +2,104 @@
 
 package pentagoxl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import pentagoxl.server.Server;
 public class NetHandler {
     private Socket socket;
+    private Sender mySender;
+    private List<Listener> listeners;
+    
+    public NetHandler(Socket sock) throws IOException {
+    	this.socket = sock;
+    	mySender = new Sender();
+    	listeners = new ArrayList<Listener>();
+    }
+    
 
     private class Sender extends Thread {
+    	private ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<String>();
+    	private PrintWriter writer;
+    	private Sender() throws IOException {
+    		writer = new PrintWriter(socket.getOutputStream(), true);
+    	}
+    	
+    	@Override
+    	public void run() {
+    		while (!socket.isOutputShutdown()) {
+    			while (!queue.isEmpty() && !socket.isOutputShutdown()) {
+    				writer.println(queue.poll());
+    			}
+    			try {
+					this.wait();
+				} catch (InterruptedException e) {}
+    			if (writer.checkError())
+    				Server.killClient(NetHandler.this);
+    		}
+    	}
+    	
+    	public void addMessageToQueue(String msg){
+    		queue.add(msg);
+    		this.notifyAll();
+    	}
     }
 
 
-    private class Receiver extends Thread {
+    private class Processor extends Thread {
+    	private BufferedReader reader;
+    	
+    	public Processor() throws IOException {
+    		this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		}
+    	
+    	public void run() {
+    		while (!socket.isInputShutdown()) {
+    			try {
+					String in = reader.readLine();
+					if (in == null) break; // LOLHAI
+					String[] cmdargs = in.split("\\Q" + ProtocolEndpoint.DELIMITER + "\\E");
+					String cmd = cmdargs[0];
+					String[] args = null;
+					if (cmdargs.length > 1) {
+						args = new String[cmdargs.length - 1];
+						for (int i = 1; i < cmdargs.length; i++)
+							args[i - 1] = cmdargs[i];
+					}
+					for (Listener l : NetHandler.this.listeners) {
+						l.onReceive(cmd, args);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
+    		}
+    	}
     }
 
 
     public static interface Listener {
-       public void onReceive(String cmd, String[] args);
+    	public void onReceive(String cmd, String[] args);
     }
 
     public void addMessage(String cmd, String[] args) {
+    	String message = cmd;
+    	for (String s : args) {
+    		message += pentagoxl.ProtocolEndpoint.DELIMITER;
+    		message += s;
+    	}
+    	
+    	mySender.addMessageToQueue(message);
+    }
+    
+    public void addListener(Listener l) {
+    	listeners.add(l);
     }
 }

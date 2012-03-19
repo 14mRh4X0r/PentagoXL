@@ -4,28 +4,19 @@ package pentagoxl;
 import pentagoxl.spel.Bord;
 import pentagoxl.spel.Speler;
 
-public class Client extends Speler implements NetHandler.Listener {
-
-    private String name;
+public abstract class Client extends Speler implements NetHandler.Listener {
     private boolean canChat, canBeChallenged;
 
     public Client(NetHandler handler) {
-        super(handler);
-    }
+        this.HANDLER = handler;
+    }    
 
-    @Override
-    public int[] doeZet(Bord bord) {
-        // TODO add logic
-        return new int[]{0, 0};
-    }
-
-    @Override
-    public String getNaam() {
-        return name;
-    }
+    public abstract int[] doeZet(Bord bord);
 
     @Override
     public void onReceive(String cmd, String[] args) {
         // TODO add logic.
     }
+    
+    public final NetHandler HANDLER;
 }

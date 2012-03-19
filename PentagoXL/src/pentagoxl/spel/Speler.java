@@ -5,10 +5,12 @@ import pentagoxl.NetHandler;
 
 public abstract class Speler {
 
-    public abstract String getNaam();
-
-    public Speler(NetHandler handler) {
-        this.HANDLER = handler;
+    public String getNaam() {
+    	return name;
+    }
+    
+    public void setNaam(String name) {
+    	this.name = name;
     }
 
     public int getAantalKnikkers() {
@@ -23,8 +25,7 @@ public abstract class Speler {
         this.veld = veld;
     }
 
-    public abstract int[] doeZet(Bord bord);
     public Veld veld;
-    public final NetHandler HANDLER;
     protected int aantalKnikkers;
+    private String name;
 }
