@@ -3,5 +3,5 @@
 package pentagoxl;
 
 import pentagoxl.spel.Speler;
-public class Client implements Speler {
+public class Client extends Speler {
 }

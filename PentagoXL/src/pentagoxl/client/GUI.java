@@ -3,7 +3,13 @@
 package pentagoxl.client;
 
 import javax.swing.JFrame;
-public class GUI extends JFrame {
+import java.util.Observer;
+public class GUI extends JFrame implements Observer {
     private class Controller {
+    }
+
+
+    public static void main(String[] args) {
+
     }
 }

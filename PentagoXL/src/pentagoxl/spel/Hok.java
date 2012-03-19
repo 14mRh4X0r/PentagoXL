@@ -10,5 +10,8 @@ public class Hok {
     public void draai(boolean klokMee) {
     }
 
+    /**
+     * @supplierCardinality 0..9 
+     */
     private Veld[] velden;
 }

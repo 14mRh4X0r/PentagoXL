@@ -17,5 +17,8 @@ public class Bord {
     public Speler getWinnaar() {
     }
 
+    /**
+     * @supplierCardinality 0..9 
+     */
     private Hok[] hokken;
 }

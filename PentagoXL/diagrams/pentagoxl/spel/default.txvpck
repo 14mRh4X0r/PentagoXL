@@ -19,6 +19,10 @@
                 <property name="sourceAnchor" value="288,118"/>
                 <property name="bendpoints" value=""/>
                 <property name="targetAnchor" value="314,118"/>
+                <reference referencedUin="linklabel:supplierCardinality:jdt:l_ast:src:pentagoxl.spel.Bord:hokken">
+                    <property name="bounds" value="284,98,28,16"/>
+                    <property name="bounds_setted_by_user" value="true"/>
+                </reference>
             </reference>
         </reference>
         <reference df-class-name="reference12" referencedUin="jdt:e_class:src:pentagoxl.spel.Hok">
@@ -28,6 +32,10 @@
                 <property name="sourceAnchor" value="416,110"/>
                 <property name="bendpoints" value=""/>
                 <property name="targetAnchor" value="449,110"/>
+                <reference referencedUin="linklabel:supplierCardinality:jdt:l_ast:src:pentagoxl.spel.Hok:velden">
+                    <property name="bounds" value="419,90,28,16"/>
+                    <property name="bounds_setted_by_user" value="true"/>
+                </reference>
             </reference>
         </reference>
         <reference df-class-name="reference13" referencedUin="jdt:e_class:src:pentagoxl.spel.Veld">
@@ -62,9 +70,9 @@
         <property name="$name" value="Note1"/>
         <property name="$note_text" value="Stiekem een enum"/>
         <link uin="id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf.linkidbnsfcgztx6wfcgztzfmg0">
-            <property name="$metaclass" value="Note Link"/>
             <participant role="Supplier" referencedUin="jdt:e_class:src:pentagoxl.spel.Veld"/>
             <participant role="Client" referencedUin="design:node:::id8d1i2gztx6wfcgztxcmoz.nodeidj1cvkgztx6wfcgztzfbjf"/>
+            <property name="$metaclass" value="Note Link"/>
         </link>
     </node>
 </nodeSet>

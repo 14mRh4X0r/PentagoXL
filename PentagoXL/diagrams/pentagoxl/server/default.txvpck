@@ -5,11 +5,7 @@
         <property name="@__options" value=""/>
         <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.server.Server">
             <property name="$shortcutReference" value="true"/>
-            <property name="bounds" value="30,33,83,82"/>
-        </reference>
-        <reference df-class-name="reference8" referencedUin="jdt:e_class:src:pentagoxl.server.NetHandlerServer">
-            <property name="$shortcutReference" value="true"/>
-            <property name="bounds" value="193,37,113,98"/>
+            <property name="bounds" value="30,33,83,117"/>
         </reference>
         <property name="$defaultDiagram" value=""/>
     </view>

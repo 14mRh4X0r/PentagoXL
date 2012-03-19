@@ -2,5 +2,12 @@
 
 package pentagoxl.server;
 
-public class Server {
+public class Server extends Thread {
+    public static void main(String[] args) {
+
+    }
+
+    public void run() {
+		//TODO implement
+    }
 }

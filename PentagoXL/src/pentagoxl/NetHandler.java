@@ -2,5 +2,22 @@
 
 package pentagoxl;
 
-public abstract class NetHandler {
+import java.net.Socket;
+public class NetHandler {
+    private Socket socket;
+
+    private class Sender extends Thread {
+    }
+
+
+    private class Receiver extends Thread {
+    }
+
+
+    public static interface Listener {
+       public void onReceive(String cmd, String[] args);
+    }
+
+    public void addMessage(String cmd, String[] args) {
+    }
 }
