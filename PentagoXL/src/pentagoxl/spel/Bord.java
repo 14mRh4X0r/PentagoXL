@@ -2,23 +2,18 @@
 
 package pentagoxl.spel;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.beans.VetoableChangeListener;
-import java.beans.VetoableChangeSupport;
 public class Bord {
     public Hok[] getHokken(){ return hokken; }
 
     public Hok getHokken(int index){ return hokken[index]; }
 
     public boolean heeftWinnaar() {
+		return false;
     }
 
     public Speler getWinnaar() {
+		return null;
     }
-
-    /**
-     * @supplierCardinality 0..9 
-     */
+    
     private Hok[] hokken;
 }

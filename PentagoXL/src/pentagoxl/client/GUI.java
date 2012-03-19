@@ -3,6 +3,8 @@
 package pentagoxl.client;
 
 import javax.swing.JFrame;
+
+import java.util.Observable;
 import java.util.Observer;
 public class GUI extends JFrame implements Observer {
     private class Controller {
@@ -12,4 +14,15 @@ public class GUI extends JFrame implements Observer {
     public static void main(String[] args) {
 
     }
+
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void buildGUI(){
+		
+	}
 }

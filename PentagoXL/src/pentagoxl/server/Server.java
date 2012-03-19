@@ -2,12 +2,34 @@
 
 package pentagoxl.server;
 
-public class Server extends Thread {
-    public static void main(String[] args) {
+import java.io.IOException;
+import java.net.*;
 
+public class Server extends Thread {
+    
+	private boolean stop = false;
+	private int port;
+	private ServerSocket servSock;
+	
+	public Server (int port) {
+		this.port = port;
+	}
+	
+	public static void main(String[] args) {
+		Server myServer = new Server(Integer.parseInt(args[0]));
+		myServer.start();
     }
 
     public void run() {
-		//TODO implement
+    	try {
+			servSock = new ServerSocket(port);
+		} catch (IOException e) {
+			System.err.println("Error while starting up. Exiting.");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		while (!stop){
+			
+		}
     }
 }

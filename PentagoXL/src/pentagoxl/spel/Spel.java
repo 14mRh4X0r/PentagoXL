@@ -12,6 +12,7 @@ public class Spel extends Observable {
     public void setSpelers(List spelers){ this.spelers = spelers; }
 
     public boolean isOver() {
+    	return false;
     }
 
     public void doeZet(int mark, int rotate) {
