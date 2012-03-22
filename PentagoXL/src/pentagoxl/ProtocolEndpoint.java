@@ -1,5 +1,6 @@
 package pentagoxl;
 
+import java.util.regex.Pattern;
 
 /**
  * The base of a socket connection. This class contains a description of the
@@ -62,22 +63,39 @@ package pentagoxl;
  * <br>
  * hint: you can use innerCompartment%9 to determine the relative position of an
  * inner compartment within an outer-compartment and (int)innerCompartment/9 to
- * determine the number of the inner compartment <br>
+ * determine the number of the outer compartment <br>
  * <br>
  * NOTE: this class uses the names John, Steve, Bob and Richard as example
  * names. These names can be substituted by any other name, as long as the name
  * meets the requirements specified in <tt>CMD_HELLO</tt>
  * 
  * @author Jeroen Vollenbrock
- * @version 0.2 review
+ * @version 1.0
  */
 public abstract class ProtocolEndpoint {
 
 	/**
 	 * the argument and list separator. We advise not using this character in
 	 * any argument except for lists.
+	 * 
+	 * @see ProtocolEndpoint#DELIMITER_PATTERN
 	 */
 	public static final String DELIMITER = "|";
+
+	/**
+	 * this is a Pattern for detecting and separating protocol messages. Use <tt>DELIMITER</tt> for
+	 * anything else.<br>
+	 * <br>
+	 * Example: DELIMITER_PATTERN.split(inputmessage);<br>
+	 * 
+	 * @see ProtocolEndpoint#DELIMITER
+	 */
+	public static final Pattern DELIMITER_PATTERN = Pattern.compile("\\|");
+
+	/**
+	 * This is the name of the server. Eg: in chats.
+	 */
+	public static final String SERVER_NAME = "server";
 
 	/**
 	 * HELO command. <br>
@@ -87,11 +105,11 @@ public abstract class ProtocolEndpoint {
 	 * <br>
 	 * first argument: player name<br>
 	 * constraints: <i>playerName.size() <= 25 &&
-	 * !playerName.contains(DELEMITER) && !playerName.contains('\n') &&
-	 * !playerName.equalsIgnoreCase("server")</i><br>
+	 * !playerName.contains(DELIMITER) && !playerName.contains('\n') &&
+	 * !playerName.equalsIgnoreCase("server") && playername is unique</i><br>
 	 * <br>
 	 * second argument: list of supported optional broadcasts, separated by
-	 * <tt>DELEMITER</tt><br>
+	 * <tt>DELIMITER</tt><br>
 	 * constraints: the list can only contain the following command names:<br>
 	 * - <tt>BCST_CHALLENGE</tt><br>
 	 * - <tt>BCST_CHAT</tt><br>
@@ -143,7 +161,7 @@ public abstract class ProtocolEndpoint {
 	 * prerequisites: a connection has been set up and the user has sent a
 	 * <tt>CMD_HELLO</tt> to the server<br>
 	 * 
-	 * @see Error
+	 * @see ProtocolError
 	 */
 	public static final String SRV_NACK = "NACK";
 
@@ -165,7 +183,8 @@ public abstract class ProtocolEndpoint {
 	 * example -->: JOIN|4<br>
 	 * <br>
 	 * prerequisite: the user has sent a <tt>CMD_HELLO</tt> to the server and
-	 * the server replied with <tt>SRV_ACK</tt><br>
+	 * the server replied with <tt>SRV_ACK</tt> and is not waiting for a game
+	 * right now.<br>
 	 * 
 	 * @see ProtocolEndpoint#SRV_ACK
 	 * @see ProtocolEndpoint#SRV_NACK
@@ -295,10 +314,10 @@ public abstract class ProtocolEndpoint {
 	 * reply: <tt>BCST_ROTATE</tt> or a NACK and a game kick when the
 	 * constraints were not met.<br>
 	 * <br>
-	 * example -->: ROTATE|Steve|L<br>
-	 * example -->: ROTATE|Steve|R<br>
+	 * example -->: ROTATE|8|L<br>
+	 * example -->: ROTATE|1|R<br>
 	 * <br>
-	 * prerequisites: the last recieved<tt>BCST_TURN</tt> contained the name of
+	 * prerequisites: the last received<tt>BCST_TURN</tt> contained the name of
 	 * the current player, a CMD_MOVE has been sent, the game has no winner,
 	 * this command can only be used once after each turn broadcast.
 	 * 
@@ -321,8 +340,8 @@ public abstract class ProtocolEndpoint {
 	 * constraints: either <tt>DIRECTION_CLOCKWISE</tt> or
 	 * <tt>DIRECTION_COUNTERCLOCKWISE</tt></i><br>
 	 * <br>
-	 * example <<--: ROTATE|Steve|R<br>
-	 * example <<--: ROTATE|Steve|L
+	 * example <<--: ROTATE|6|R<br>
+	 * example <<--: ROTATE|2|L
 	 * 
 	 * @see ProtocolEndpoint#DIRECTION_CLOCKWISE
 	 * @see ProtocolEndpoint#DIRECTION_COUNTERCLOCKWISE
@@ -364,7 +383,6 @@ public abstract class ProtocolEndpoint {
 	 * OBSERVE command *optional*<br>
 	 * <br>
 	 * Informs the server a client wants observe another client.<br>
-	 * The server expects a closed socket after receiving this command <br>
 	 * <br>
 	 * first argument: the name of the player who has to send his/her turn.<br>
 	 * constraints: <i>name.exists() </i><br>
@@ -421,8 +439,7 @@ public abstract class ProtocolEndpoint {
 	 * constraints: <i>!msg.contains('\n') && !msg.contains(DELIMITER) &&
 	 * msg.length() <= 1000</i><br>
 	 * <br>
-	 * For messages sent by the server, the username server is reserved.
-	 * <br>
+	 * For messages sent by the server, the username server is reserved. <br>
 	 * example <<--: CHAT|Bob|Hello, My name is Bob! <br>
 	 * example <<--: CHAT|Steve|Hi Bob, what is your problem?<br>
 	 * example <<--: CHAT|John|I've got an alcohol problem! I don't have any
@@ -430,6 +447,7 @@ public abstract class ProtocolEndpoint {
 	 * <br>
 	 * prerequisite: All recievers support the BCST_CHAT command as indicated by
 	 * <tt>CMD_HELO</tt>
+	 * 
 	 * @see ProtocolEndpoint#CMD_HELLO
 	 * @see ProtocolEndpoint#CMD_CHAT
 	 */
@@ -447,7 +465,7 @@ public abstract class ProtocolEndpoint {
 	 * When the first argument is -1, a list of players opted in for a random
 	 * game is returned<br>
 	 * When the first argument is 0, a list of players that are not playing any
-	 * game is returned.<br>
+	 * game is returned (lobby).<br>
 	 * When the first argument is 2..4 a list of players that are currently
 	 * assembling, or are currently playing a 2..4 player game.<br>
 	 * sending this command with -1, 2,3,4 and adding the result together
@@ -465,6 +483,7 @@ public abstract class ProtocolEndpoint {
 	 * <br>
 	 * prerequisite: the user is connected and informed the server about a
 	 * preferred name using <tt>CMD_HELLO</tt><br>
+	 * 
 	 * @see ProtocolEndpoint#SRV_LIST
 	 */
 	public static final String CMD_LIST = "LIST";
@@ -480,6 +499,7 @@ public abstract class ProtocolEndpoint {
 	 * example <<--: LIST|Bob|Steve|John|Richard<br>
 	 * example <<--: LIST<br>
 	 * example <<--: LIST|Steve<br>
+	 * 
 	 * @see ProtocolEndpoint#CMD_LIST
 	 */
 	public static final String SRV_LIST = "LIST";
@@ -493,9 +513,9 @@ public abstract class ProtocolEndpoint {
 	 * constraints: <i>list.length >= 1 && list.length <= 3 && names.exist() &&
 	 * names.inlobby()</i><br>
 	 * <br>
-	 * Calling <tt>CMD_CHALLENGE</tt> always results in either a <tt>BCST_CHALLENGE</tt>
-	 * broadcast or a <tt>NACK|COMMAND_UNSUPPORTED</tt> or a
-	 * <tt>NACK|CHALLENGE_UNSUPPORTED</tt><br>
+	 * Calling <tt>CMD_CHALLENGE</tt> always results in either a
+	 * <tt>BCST_CHALLENGE</tt> broadcast or a <tt>NACK|COMMAND_UNSUPPORTED</tt>
+	 * or a <tt>NACK|CHALLENGE_UNSUPPORTED</tt><br>
 	 * <br>
 	 * example -->: CHALLENGE|Steve|John|Bob<br>
 	 * example -->: CHALLENGE|Steve|John<br>
@@ -503,6 +523,7 @@ public abstract class ProtocolEndpoint {
 	 * <br>
 	 * prerequisite: the user is connected and informed the server about a
 	 * preferred name using <tt>CMD_HELLO</tt><br>
+	 * 
 	 * @see ProtocolEndpoint#SRV_NACK
 	 * @see ProtocolEndpoint#BCST_CHALLENGE
 	 */
@@ -527,6 +548,7 @@ public abstract class ProtocolEndpoint {
 	 * <br>
 	 * prerequisite: all users support the challenge broadcast as indicated with
 	 * <tt>CMD_HELLO</tt>
+	 * 
 	 * @see ProtocolEndpoint#SRV_NACK
 	 * @see ProtocolEndpoint#BCST_STARTGAME
 	 * @see ProtocolEndpoint#CMD_HELLO
@@ -541,9 +563,10 @@ public abstract class ProtocolEndpoint {
 	 * example -->: ACCEPT<br>
 	 * <br>
 	 * prerequisite: a <tt>BCST_CHALLENGE</tt> has been received.
+	 * 
 	 * @see ProtocolEndpoint#BCST_CHALLENGE
 	 */
-	public static final String CMD_CHALLANGE_ACCEPT = "ACCEPT";
+	public static final String CMD_CHALLENGE_ACCEPT = "ACCEPT";
 
 	/**
 	 * DECLINE Command *optional*<br>
@@ -553,7 +576,44 @@ public abstract class ProtocolEndpoint {
 	 * example -->: DECLINE<br>
 	 * <br>
 	 * prerequisite: a <tt>BCST_CHALLENGE</tt> has been received.
+	 * 
 	 * @see ProtocolEndpoint#BCST_CHALLENGE
 	 */
 	public static final String CMD_CHALLENGE_DECLINE = "DECLINE";
+
+	/**
+	 * PLAYER JOINED broadcast *optional*<br>
+	 * <br>
+	 * Broadcasts when a new player joined the server (lobby).<br>
+	 * <br>
+	 * first argument: The name of the player<br>
+	 * constraints: <i>The name exists</i><br>
+	 * <br>
+	 * example <<--: JOINED|Richard<br>
+	 * <br>
+	 * prerequisite: the receiver has notified the server about supporting this
+	 * broadcast using <tt>CMD_HELLO/tt>
+	 * 
+	 * @see ProtocolEndpoint#BCST_LIST
+	 * @see ProtocolEndpoint#CMD_HELLO
+	 */
+	public static final String BCST_PLAYER_JOINED = "JOINED";
+
+	/**
+	 * PLAYER LEFT broadcast *optional*<br>
+	 * <br>
+	 * Broadcasts when a player left the server.<br>
+	 * <br>
+	 * first argument: The name of the player<br>
+	 * constraints: <i>The name exists</i><br>
+	 * <br>
+	 * example <<--: LEFT|Richard<br>
+	 * <br>
+	 * prerequisite: the receiver has notified the server about supporting this
+	 * broadcast using <tt>CMD_HELLO/tt>
+	 * 
+	 * @see ProtocolEndpoint#BCST_LIST
+	 * @see ProtocolEndpoint#CMD_HELLO
+	 */
+	public static final String BCST_PLAYER_LEFT = "LEFT";
 }

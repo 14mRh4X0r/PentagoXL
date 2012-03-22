@@ -4,6 +4,7 @@ package pentagoxl.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class Server extends Thread {
 	private static boolean stop = false;
 	private static int port;
 	private static ServerSocket servSock;
-	private static List<Client> clientList;
+	private static List<Client> clientList = new ArrayList<Client>();
 	private static Server instance;
 	
 	public Server (int port) {
@@ -56,5 +57,55 @@ public class Server extends Thread {
     	for (; it.hasNext(); c = it.next())
     		if (c.HANDLER == handler)
     			it.remove();
+    }
+    
+    /**
+     * Requests a list of specific connected clients.<br>
+	 * <br>
+	 * first argument: the type of game they are either waiting for or playing
+	 * right now<br>
+	 * constraints: <i>players >= -1 && players <= 4 && players != 1</i><br>
+	 * <br>
+	 * When the argument is -1, a list of players opted in for a random
+	 * game is returned<br>
+	 * When the argument is 0, a list of players that are not playing any
+	 * game is returned.<br>
+	 * When the argument is 2..4 a list of players that are currently
+	 * assembling, or are currently playing a 2..4 player game.<br>
+	 * sending this command with -1, 0, 2,3,4 and adding the result together
+	 * results in a list of all connected players.<br>
+     * @param optedIn list of players to return
+     * @return list of players
+     */
+    public static List<String> listPlayers(int optedIn) {
+    	List<String> toRet = new ArrayList<String>();
+    	for (Client c : clientList) {
+    		if (c.clientsInGame == optedIn) {
+    			toRet.add(c.getNaam());
+    		}
+    	}
+    	return toRet;
+    }
+    
+    /**
+     * Returns all clients currently connected to this server.
+     * @return All clients currently connected to this server
+     */
+    public static List<String> listAllPlayers() {
+    	List<String> toRet = new ArrayList<String>();
+    	toRet.addAll(listPlayers(-1));
+    	toRet.addAll(listPlayers(0));
+    	toRet.addAll(listPlayers(2));
+    	toRet.addAll(listPlayers(3));
+    	toRet.addAll(listPlayers(4));
+    	return toRet;
+    }
+    
+    /**
+     * Prints a message on the console
+     * @param msg
+     */
+    public static void putMessage(String msg) {
+    	System.out.println(msg);
     }
 }

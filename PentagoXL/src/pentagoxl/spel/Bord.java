@@ -3,6 +3,13 @@ package pentagoxl.spel;
 
 public class Bord {
 
+	public Bord() {
+		hokken = new Hok[9];
+		for (int i = 0; i < HOKKEN; i++) {
+			hokken[i] = new Hok();
+		}
+	}
+	
     private Hok[] hokken;
     public static final int HOKKEN = 9,
             VELDEN_PER_HOK = 9,

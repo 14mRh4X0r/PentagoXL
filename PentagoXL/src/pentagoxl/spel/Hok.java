@@ -3,15 +3,30 @@
 package pentagoxl.spel;
 
 public class Hok {
-    public Veld getVeld(int index){ return velden[index]; }
+    
+	public Hok() {
+		velden = new Veld[9];
+		for (int i = 0; i < 9; i++) {
+			velden[i] = Veld.LEEG;
+		}
+	}
+	
+	public Veld getVeld(int index){ return velden[index]; }
 
     public Veld[] getVelden(){ return velden; }
 
     public void draai(boolean klokMee) {
+    	
     }
 
-    /**
-     * @supplierCardinality 0..9 
-     */
     private Veld[] velden;
+    
+    @Override
+    public String toString() {
+    	String toRet = "";
+    	for (Veld v : velden) {
+    		toRet +=  ", " + v.toString();
+    	}
+    	return toRet.substring(2);
+    }
 }

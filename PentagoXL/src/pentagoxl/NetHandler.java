@@ -35,7 +35,9 @@ public class NetHandler {
     	public void run() {
     		while (!socket.isOutputShutdown()) {
     			while (!queue.isEmpty() && !socket.isOutputShutdown()) {
-    				writer.println(queue.poll());
+    				String toSend = queue.poll();
+    				putMessage(toSend, false);
+    				writer.println(toSend);
     			}
     			try {
 					this.wait();
@@ -63,6 +65,7 @@ public class NetHandler {
     		while (!socket.isInputShutdown()) {
     			try {
 					String in = reader.readLine();
+					putMessage(in, true);
 					if (in == null) break; // LOLHAI
 					String[] cmdargs = in.split("\\Q" + ProtocolEndpoint.DELIMITER + "\\E");
 					String cmd = cmdargs[0];
@@ -89,7 +92,7 @@ public class NetHandler {
     	public void onReceive(String cmd, String[] args);
     }
 
-    public void addMessage(String cmd, String[] args) {
+    public void addMessage(String cmd, String... args) {
     	String message = cmd;
     	for (String s : args) {
     		message += pentagoxl.ProtocolEndpoint.DELIMITER;
@@ -99,7 +102,35 @@ public class NetHandler {
     	mySender.addMessageToQueue(message);
     }
     
+    /**
+     * Builds a nack message. <BR />
+     * Will call <tt>addMessage(ProtocolEndpoint.SRV_NACK, error.getCode())</tt>
+     * @param error <tt>Error to send</tt>
+     */
+    public void addNack(ProtocolError error) {
+    	addMessage(ProtocolEndpoint.SRV_NACK, error.getCode() + "");
+    }
+    
     public void addListener(Listener l) {
     	listeners.add(l);
     }
+    
+    /**
+     * Returns the socket this <tt>NetHander</tt> is using to communicate.
+     * @return A socket object
+     */
+    public Socket getSocket() {
+    	return socket;
+    }
+    
+
+    
+    private void putMessage(String msg, boolean incoming) {
+    	String naam;
+    	naam = getSocket().getInetAddress().toString();
+    	String toPrint = naam + (incoming ? "> " : "< ") + msg;
+    	Server.putMessage(toPrint);
+    }
+    
+    
 }
