@@ -15,13 +15,12 @@ public class Spel extends Observable {
     public Spel() {
         bord = new Bord();
         zetIsAan = 0;
-        clients.get(zetIsAan).canMove = true;
-        speel();
     }
 
     /**
      * Returns the <tt>Bord</tt> of this Spel.
-     * @return 
+     *
+     * @return
      */
     public Bord getBord() {
         return bord;
@@ -29,7 +28,8 @@ public class Spel extends Observable {
 
     /**
      * Returns a list of clients connec
-     * @return 
+     *
+     * @return
      */
     public List<Client> getClients() {
         return clients;
@@ -37,10 +37,6 @@ public class Spel extends Observable {
 
     public void addClient(Client client) {
         this.clients.add(client);
-    }
-
-    public boolean isOver() {
-        return false;
     }
 
     private void doeMove(int plek) {
@@ -72,9 +68,15 @@ public class Spel extends Observable {
     }
 
     private void speel() {
-        broadcast(ProtocolEndpoint.BCST_TURN, clients.get(zetIsAan).getNaam());
-        int zet[] = clients.get(zetIsAan).doeZet(bord);
-        
+        Client aanDeBeurt = clients.get(zetIsAan);
+        aanDeBeurt.canMove = true;
+        broadcast(ProtocolEndpoint.BCST_TURN, aanDeBeurt.getNaam());
+        int zet[] = aanDeBeurt.doeZet(bord);
+        bord.doeMove(aanDeBeurt.getVeld(), zet[0]);
+        if (!bord.heeftWinnaar())
+            bord.doeRotate(zet[1]);
+        if (++zetIsAan >= clients.size())
+            zetIsAan = 0;
     }
 
     public void broadcast(String cmd, String... args) {
@@ -84,5 +86,53 @@ public class Spel extends Observable {
 
     public boolean zetIsAanClient(Client client) {
         return clients.get(zetIsAan) == client;
+    }
+
+    public boolean isOver() {
+        int alleKnikkers = 0;
+        for (Client c : clients)
+            alleKnikkers += c.aantalKnikkers;
+        return alleKnikkers == 0 || bord.heeftWinnaar();
+    }
+
+    private String[] getPlayerNames() {
+        String[] toRet = new String[clients.size()];
+        for (int i = 0; i < toRet.length; i++)
+            toRet[i] = clients.get(i).getNaam();
+
+        return toRet;
+    }
+
+    /**
+     * Starts the game.
+     */
+    public void start() {
+        this.new Runner().start();
+    }
+
+    private class Runner extends Thread {
+
+        @Override
+        public void run() {
+            int aantalKnikkers = clients.size() == 2 ? 40 : 20;
+            for (int i = 0; i < clients.size(); i++) {
+                Client c = clients.get(i);
+                c.aantalKnikkers = aantalKnikkers;
+                c.setVeld(Veld.byIndex(i));
+            }
+
+            broadcast(ProtocolEndpoint.BCST_STARTGAME, getPlayerNames());
+
+            while (!isOver())
+                speel();
+
+            if (bord.heeftWinnaar()) {
+                Speler[] winnaars = bord.getWinnaars();
+                String[] winString = new String[winnaars.length];
+                for (int i = 0; i < winnaars.length; i++)
+                    winString[i] = winnaars[i].getNaam();
+                broadcast(ProtocolEndpoint.BCST_GAMEOVER, winString);
+            }
+        }
     }
 }

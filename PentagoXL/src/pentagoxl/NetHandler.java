@@ -9,7 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pentagoxl.server.Server;
 
 public class NetHandler {
@@ -21,6 +22,7 @@ public class NetHandler {
     public NetHandler(Socket sock) throws IOException {
         this.socket = sock;
         mySender = new Sender();
+        mySender.start();
         new Processor().start();
         listeners = new ArrayList<Listener>();
     }
@@ -35,7 +37,7 @@ public class NetHandler {
         }
 
         @Override
-        public void run() {
+        public synchronized void run() {
             while (!socket.isOutputShutdown()) {
                 while (!queue.isEmpty() && !socket.isOutputShutdown()) {
                     String toSend = queue.poll();
@@ -45,15 +47,16 @@ public class NetHandler {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
+                    // We don't care.
                 }
-                if (writer.checkError())
-                    Server.killClient(NetHandler.this);
             }
         }
 
         public void addMessageToQueue(String msg) {
             queue.add(msg);
-            this.notifyAll();
+            synchronized (this) {
+                this.notifyAll();
+            }
         }
     }
 
@@ -66,7 +69,7 @@ public class NetHandler {
         }
 
         public void run() {
-            while (!socket.isInputShutdown())
+            while (!socket.isClosed() && !socket.isInputShutdown())
                 try {
                     String in = reader.readLine();
                     logMessage(in, true); // DEBUG
@@ -83,8 +86,7 @@ public class NetHandler {
                     for (Listener l : NetHandler.this.listeners)
                         l.onReceive(cmd, args);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                 }
         }
     }

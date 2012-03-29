@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import pentagoxl.Client;
 import pentagoxl.NetHandler;
+import pentagoxl.spel.Spel;
 
 public class Server extends Thread {
 
@@ -73,9 +74,8 @@ public class Server extends Thread {
             if (clientList.isEmpty())
                 throw new IllegalArgumentException("There are no clients, wtf dude");
 
-            Client c;
-            for (Iterator<Client> it = clientList.iterator(); it.hasNext(); c = it.next()) {
-                c = it.next();
+            for (Iterator<Client> it = clientList.iterator(); it.hasNext();) {
+                Client c = it.next();
                 if (c.HANDLER == handler)
                     it.remove();
             }
@@ -106,6 +106,16 @@ public class Server extends Thread {
             if (c.clientsInGame == optedIn)
                 toRet.add(c);
 
+        return toRet;
+    }
+
+    private static List<Client> getWaitingClients(int optedIn) {
+        List<Client> toRet = Server.getClients(optedIn);
+        for (Iterator<Client> it = toRet.iterator(); it.hasNext();) {
+            Client c = it.next();
+            if (c.getSpel() != null)
+                it.remove();
+        }
         return toRet;
     }
 
@@ -144,9 +154,26 @@ public class Server extends Thread {
      * @param msg
      */
     public static void logMessage(String msg) {
-        Logger.getLogger(Server.class.getName()).info(msg);
+        Logger.getLogger(Server.class.getName()).fine(msg);
     }
 
     static void createGames() {
+        for (int numP = 4; numP >= 2; numP--) {
+            List<Client> randP = Server.getWaitingClients(-1);
+            List<Client> otherP = Server.getWaitingClients(4);
+            while (otherP.size() >= numP) {
+                Spel s = new Spel();
+                for (int i = 0; i < 4; i++)
+                    s.addClient(otherP.remove(0));
+                s.start();
+            }
+            if (otherP.size() + randP.size() >= numP) {
+                Spel s = new Spel();
+                for (Client c : otherP)
+                    s.addClient(c);
+                for (int i = 0; i < numP - otherP.size(); i++)
+                    s.addClient(randP.remove(0));
+            }
+        }
     }
 }

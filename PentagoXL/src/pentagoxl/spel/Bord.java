@@ -27,7 +27,7 @@ public class Bord {
         return false;
     }
 
-    public Speler getWinnaar() {
+    public Speler[] getWinnaars() {
         return null;
     }
 
@@ -44,5 +44,19 @@ public class Bord {
         for (int i = 0; i < HOKKEN; i++)
             System.arraycopy(this.hokken[i].getVelden(), 0, b.hokken[i].getVelden(), 0, VELDEN_PER_HOK);
         return b;
+    }
+
+    /**
+     * Doet een zet.
+     * @param v Het veld om te zetten.
+     * @param veld De index van het veld om te zetten.
+     */
+    public void doeMove(Veld v, int veld) {
+        this.getHok(veld / VELDEN_PER_HOK).getVelden()[veld % HOKKEN] = v;
+    }
+    
+    public void doeRotate(int rotate) {
+        int hok = Math.abs(rotate) - 1;
+        this.getHok(hok).draai(rotate > 0);
     }
 }

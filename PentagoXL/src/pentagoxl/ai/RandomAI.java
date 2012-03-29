@@ -26,9 +26,7 @@ public class RandomAI extends AI {
         do {
             vakje = random.nextInt(Bord.VELDEN);
         } while (!bord.isLeegVeld(vakje));
-        do {
-            hok = random.nextInt(Bord.HOKKEN);
-        } while (hok != vakje / Bord.HOKKEN);
+        hok = random.nextInt(Bord.HOKKEN);
         
         // We're lazy and use negativeness for CCW, thus requiring hok != 0
         hok++;
@@ -41,5 +39,10 @@ public class RandomAI extends AI {
     @Override
     public String getNaam() {
         return "I'm fucking random!";
+    }
+
+    @Override
+    public void onReceive(String cmd, String[] args) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

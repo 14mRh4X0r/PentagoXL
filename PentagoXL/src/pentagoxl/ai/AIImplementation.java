@@ -15,4 +15,9 @@ public class AIImplementation extends AI {
     public int[] doeZet(Bord bord) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void onReceive(String cmd, String[] args) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -3,3 +3,4 @@ nbproject/
 bin/
 build.xml
 *.class
+build/

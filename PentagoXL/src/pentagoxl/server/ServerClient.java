@@ -22,8 +22,6 @@ public class ServerClient extends Client {
                 this.handleHello(args);
             else
                 this.HANDLER.addNack(ProtocolError.UNEXPECTED_CMD);
-        else if (ProtocolEndpoint.CMD_CHALLENGE.equals(cmd))
-            this.handleChallenge(args);
         else if (ProtocolEndpoint.CMD_CHALLENGE_ACCEPT.equals(cmd)
                 || ProtocolEndpoint.CMD_CHALLENGE_DECLINE.equals(cmd))
             this.handleChallengeResponse(ProtocolEndpoint.CMD_CHALLENGE_ACCEPT.equals(cmd), args);
@@ -34,10 +32,15 @@ public class ServerClient extends Client {
         else if (ProtocolEndpoint.CMD_QUIT.equals(cmd))
             this.handleQuit(args);
         else if (this.spel == null)
-            if (ProtocolEndpoint.CMD_JOIN.equals(cmd))
-                this.handleJoin(args);
-            else if (ProtocolEndpoint.CMD_OBSERVE.equals(cmd))
-                this.handleObserve(args);
+            if (this.clientsInGame == 1)
+                if (ProtocolEndpoint.CMD_JOIN.equals(cmd))
+                    this.handleJoin(args);
+                else if (ProtocolEndpoint.CMD_OBSERVE.equals(cmd))
+                    this.handleObserve(args);
+                else if (ProtocolEndpoint.CMD_CHALLENGE.equals(cmd))
+                    this.handleChallenge(args);
+                else
+                    this.HANDLER.addNack(ProtocolError.UNEXPECTED_CMD);
             else
                 this.HANDLER.addNack(ProtocolError.UNEXPECTED_CMD);
         else if (this.spel.zetIsAanClient(this))
@@ -48,10 +51,10 @@ public class ServerClient extends Client {
             else
                 this.HANDLER.addNack(ProtocolError.UNEXPECTED_CMD);
         else
-            this.HANDLER.addNack(ProtocolError.UNEXPECTED_CMD);
+            this.HANDLER.addNack(ProtocolError.COMMAND_UNSUPPORTED);
 
 
-
+        /*
         if (ProtocolEndpoint.CMD_HELLO.equals(cmd) && getNaam() == null)				//CMD_HELLO logic
             if (args.length == 1)														//Check if name was sent
                 if (args[0].equalsIgnoreCase(ProtocolEndpoint.SERVER_NAME) || args[0].length() > 25)		//Check for length of name
@@ -118,7 +121,7 @@ public class ServerClient extends Client {
                 }
             else
                 HANDLER.addNack(ProtocolError.INVALID_ARGUMENT_COUNT);
-
+                */
     }
 
     @Override
@@ -131,18 +134,18 @@ public class ServerClient extends Client {
             Logger.getLogger(ServerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         toRet[0] = this.lastMove;
-        Bord testBord = bord.deepcopy();
-        testBord.
         try {
             this.wait(); // Wait for a ROTATE
         } catch (InterruptedException ex) {
             Logger.getLogger(ServerClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+        toRet[1] = this.lastRotate;
         return toRet;
     }
 
     private void handleHello(String[] args) {
-        if (args[0].length() > 25 || args[0].isEmpty() || args[0].equals(ProtocolEndpoint.SERVER_NAME))
+        if (args == null || args[0].length() > 25
+                || args[0].equalsIgnoreCase(ProtocolEndpoint.SERVER_NAME))
             this.HANDLER.addNack(ProtocolError.INVALID_USER);
         else if (Server.getPlayerList().contains(args[0]))
             this.HANDLER.addNack(ProtocolError.USERNAME_TAKEN);
@@ -211,6 +214,7 @@ public class ServerClient extends Client {
                 synchronized (this) {
                     this.notifyAll();
                 }
+                this.spel.broadcast(ProtocolEndpoint.BCST_MOVE, this.getNaam(), args[0]);
             }
         }
     }
@@ -223,8 +227,13 @@ public class ServerClient extends Client {
                 || args[1].equals(ProtocolEndpoint.DIRECTION_COUNTERCLOCKWISE))) {
             this.HANDLER.addNack(ProtocolError.INVALID_MOVE);
             this.spel.kickClient(this);
-        } else
+        } else {
             this.lastRotate = ((Integer.parseInt(args[0]) + 1)
                     * (args[1].equals(ProtocolEndpoint.DIRECTION_CLOCKWISE) ? 1 : -1));
+            synchronized (this) {
+                this.notifyAll();
+            }
+            this.spel.broadcast(ProtocolEndpoint.BCST_ROTATE, args[0], args[1]);
+        }
     }
 }
