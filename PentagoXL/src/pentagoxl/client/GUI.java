@@ -38,4 +38,10 @@ public class GUI extends JFrame implements ClientClient.Listener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void gameOver(Speler[] winnaars) {
+		// TODO Auto-generated method stub
+		
+	}
 }

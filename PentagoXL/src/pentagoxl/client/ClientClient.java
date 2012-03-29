@@ -2,6 +2,7 @@ package pentagoxl.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pentagoxl.Client;
@@ -19,6 +20,7 @@ public class ClientClient extends Client {
 	private Speler[] spelers;
 	private int currentTurn;
 	private int myTurn;
+	private final static String[] SUPPORTEDCMDS = {};
 	
 	public ClientClient(NetHandler handler) {
 		super(handler);
@@ -42,12 +44,16 @@ public class ClientClient extends Client {
 
 	}
 	
+	/**
+	 * Returns a deepcopy of the bord used by this client
+	 * @return A deepcopy of this bord
+	 */
 	public Bord getBord() {
-		return bord;
+		return bord.deepcopy();
 	}
 	
 	private void handleNack(String[] args) {
-		
+		//IDC!
 	}
 	
 	private void closeSocket() {
@@ -105,7 +111,15 @@ public class ClientClient extends Client {
 	}
 	
 	private void handleGameOver(String[] args) {
-		
+		List<Speler> winnaars = new ArrayList<Speler>(4);
+		for (String s : args) {
+			for (Speler sp : spelers) {
+				if (sp.getNaam().equals(s)) {
+					winnaars.add(sp);
+				}
+			}
+		}
+		updateGameOver(winnaars.toArray(new Speler[0]));
 	}
 	
 	private void updateTurn(){
@@ -128,7 +142,7 @@ public class ClientClient extends Client {
 	
 	private void updateGameOver(Speler[] winnaars) {
 		for (Listener l : listeners) {
-			
+			l.gameOver(winnaars);
 		}
 	}
 	
@@ -136,10 +150,80 @@ public class ClientClient extends Client {
 		listeners.add(listener);
 	}
 	
+	/**
+	 * Listener interface for ClientClient
+	 * @author Wilco Wolters
+	 *
+	 */
 	public interface Listener {
+		/**
+		 * Called when the listener should do a move
+		 */
 		public void doTurn();
+		/**
+		 * Called when a game is starting
+		 * @param spelers Spelers in the game
+		 */
 		public void gameStarting(Speler[] spelers);
+		/**
+		 * Called when the bord changes
+		 */
 		public void bordChanged();
+		/**
+		 * Called when the game is over.
+		 * @param winnaars Winners of the game.
+		 */
+		public void gameOver(Speler[] winnaars);
+	}
+
+	/**
+	 * Not used clientside, so not implemented.
+	 */
+	@Override
+	public int[] doeZet(Bord bord) {
+		return null;
+	}
+	
+	/**
+	 * Sends a command to the server to join
+	 * @param naam Name to use when joining
+	 */
+	public void sendHello(String naam) {
+		List<String> args = new ArrayList<String>();
+		args.add(naam);
+		args.addAll(Arrays.asList(SUPPORTEDCMDS));
+		HANDLER.addMessage(ProtocolEndpoint.CMD_HELLO, args.toArray(new String[0]));
+	}
+	
+	/**
+	 * Send a move to the server. Does a clientside check wether the move is allowed.
+	 * @param vak Where to place the move.
+	 * @return true when move is allowed
+	 */
+	public boolean sendMove(int vak) {
+		if (bord.isLeegVeld(vak)) {
+			HANDLER.addMessage(ProtocolEndpoint.CMD_MOVE, vak + "");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Sends a rotate command to the server.
+	 * @param vak Vak to rotate
+	 * @param direction Direction to rotate in.
+	 * @see pentagoxl.ProtocolEndpoint#CMD_ROTATE
+	 */
+	public void sendRotate(int vak, String direction) {
+		HANDLER.addMessage(ProtocolEndpoint.CMD_ROTATE, vak + "", direction);
+	}
+	
+	/**
+	 * Sends a quitcommand to the server.
+	 */
+	public void sendQuit() {
+		HANDLER.addMessage(ProtocolEndpoint.CMD_QUIT);
 	}
 
 }
