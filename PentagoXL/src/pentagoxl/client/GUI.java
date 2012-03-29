@@ -4,25 +4,38 @@ package pentagoxl.client;
 
 import javax.swing.JFrame;
 
+import pentagoxl.spel.Speler;
+
 import java.util.Observable;
 import java.util.Observer;
-public class GUI extends JFrame implements Observer {
+public class GUI extends JFrame implements ClientClient.Listener{
     private class Controller {
     }
 
 
     public static void main(String[] args) {
-
+    	
     }
-
+	
+	private void buildGUI(){
+		
+	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
+	public void doTurn() {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	private void buildGUI(){
+
+	@Override
+	public void gameStarting(Speler[] spelers) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bordChanged() {
+		// TODO Auto-generated method stub
 		
 	}
 }

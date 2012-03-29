@@ -2,6 +2,27 @@
 
 package pentagoxl.spel;
 
+/**
+ * the order in which the names are returned represent the colors of the
+ * players. the first player uses red, the second blue, the third green, the
+ * fourth yellow.
+ *
+ */
 public enum Veld {
-    ROOD, GEEL, GROEN, BLAUW, LEEG
+    ROOD, BLAUW, GROEN, GEEL, LEEG;
+    
+    public static Veld byIndex(int index) {
+    	switch (index) {
+	    	case 0:
+	    		return ROOD;
+	    	case 1:
+	    		return BLAUW;
+	    	case 2:
+	    		return GROEN;
+	    	case 3:
+	    		return GEEL;
+	    	default:
+	    		return LEEG;
+    	}
+    }
 }
