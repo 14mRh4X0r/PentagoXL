@@ -25,7 +25,7 @@ public class RandomAI extends AI {
         int vakje, hok;
         do {
             vakje = random.nextInt(Bord.VELDEN);
-        } while (!bord.isLeegVakje(vakje));
+        } while (!bord.isLeegVeld(vakje));
         do {
             hok = random.nextInt(Bord.HOKKEN);
         } while (hok != vakje / Bord.HOKKEN);

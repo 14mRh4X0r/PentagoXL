@@ -31,7 +31,18 @@ public class Bord {
         return null;
     }
 
-    public boolean isLeegVakje(int i) {
+    public boolean isLeegVeld(int i) {
         return this.getHok(i / VELDEN_PER_HOK).getVeld(i % HOKKEN) == Veld.LEEG;
+    }
+    
+    public Veld getVeld(int i) {
+        return this.getHok(i / VELDEN_PER_HOK).getVeld(i % HOKKEN);
+    }
+    
+    public Bord deepcopy() {
+        Bord b = new Bord();
+        for (int i = 0; i < HOKKEN; i++)
+            System.arraycopy(this.hokken[i].getVelden(), 0, b.hokken[i].getVelden(), 0, VELDEN_PER_HOK);
+        return b;
     }
 }
