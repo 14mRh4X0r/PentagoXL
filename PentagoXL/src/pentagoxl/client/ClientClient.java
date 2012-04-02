@@ -157,7 +157,7 @@ public class ClientClient extends Client {
 	 */
 	public interface Listener {
 		/**
-		 * Called when the listener should do a move
+		 * Called when the listener should send a move to the server
 		 */
 		public void doTurn();
 		/**
@@ -196,7 +196,7 @@ public class ClientClient extends Client {
 	}
 	
 	/**
-	 * Send a move to the server. Does a clientside check wether the move is allowed.
+	 * Send a move to the server. Does a clientside check whether the move is allowed.
 	 * @param vak Where to place the move.
 	 * @return true when move is allowed
 	 */

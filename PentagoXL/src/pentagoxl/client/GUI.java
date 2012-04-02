@@ -2,23 +2,48 @@
 
 package pentagoxl.client;
 
-import javax.swing.JFrame;
+import java.awt.GridLayout;
 
+import javax.swing.*;
 import pentagoxl.spel.Speler;
+import pentagoxl.spel.Veld;
 
-import java.util.Observable;
-import java.util.Observer;
 public class GUI extends JFrame implements ClientClient.Listener{
-    private class Controller {
-    }
+    
+	public GUI() {
+		super("PentagoXL");
+		
+		buildGUI();
+		
+		setVisible(true);
+	}
 
 
     public static void main(String[] args) {
-    	
+    	new GUI();
     }
 	
 	private void buildGUI(){
+		setSize(600,420);		
+		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
+		//Panel which contains 9 other panels
+		JPanel bordPanel = new JPanel(new GridLayout(3,3)); 
+		this.getContentPane().add(bordPanel);
+		
+		//Array of panels which will contain the balls
+		JPanel hokPanels[] = new JPanel[9];
+		for (int i = 0; i < 9; i++) {
+			hokPanels[i] = new JPanel(new GridLayout(3,3));
+			bordPanel.add(hokPanels[i]);
+		}
+		
+		//Array which contains every button
+		JButton buttons[] = new JButton[81];
+		for (int i = 0; i < 81; i++) {
+			buttons[i] = new JButton(Veld.LEEG.toString());
+			hokPanels[i/9].add(buttons[i]);
+		}
 	}
 
 	@Override
@@ -42,6 +67,10 @@ public class GUI extends JFrame implements ClientClient.Listener{
 	@Override
 	public void gameOver(Speler[] winnaars) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public void displayMessage(String msg) {
 		
 	}
 }
