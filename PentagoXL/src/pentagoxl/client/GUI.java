@@ -2,20 +2,57 @@
 
 package pentagoxl.client;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 
 import javax.swing.*;
+
+import pentagoxl.NetHandler;
 import pentagoxl.spel.Speler;
 import pentagoxl.spel.Veld;
 
-public class GUI extends JFrame implements ClientClient.Listener{
+public class GUI extends JFrame implements ClientClient.Listener, ActionListener{
     
+	private ClientClient myClient;
+	private JButton     bConnect;
+    private JTextField  tfPort;
+    private JTextField 	tfAddress;
+    private JTextField	tfName;
+    private JComboBox	cbAmount;
+    
+    private static final String[] playerAmounts = {"Don't care", "2", "3", "4"};
+	
 	public GUI() {
 		super("PentagoXL");
 		
 		buildGUI();
 		
 		setVisible(true);
+	}
+	
+	/**
+	 * Connects to a server with given ip and port
+	 * @param ip ip to connect to
+	 * @param port port to connect to
+	 * @param naam Name to use when connecting
+	 */
+	public void connect(InetAddress ip, int port, String naam) {
+		try {
+			Socket sock = new Socket(ip, port);
+			NetHandler nh = new NetHandler(sock);
+			myClient = new ClientClient(nh);
+			myClient.sendHello(naam);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 
@@ -26,6 +63,41 @@ public class GUI extends JFrame implements ClientClient.Listener{
 	private void buildGUI(){
 		setSize(600,420);		
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		
+		//Connection panel
+		JPanel p1 = new JPanel(new FlowLayout());
+        JPanel pp = new JPanel(new GridLayout(4,2));     
+
+
+        JLabel lbAddress = new JLabel("Address: ");
+        tfAddress = new JTextField(12);
+
+        JLabel lbPort = new JLabel("Port:");
+        tfPort        = new JTextField(5);
+        
+        JLabel lbName = new JLabel("Name:");
+        tfName        = new JTextField(System.getProperty("user.name"), 12);
+        
+        JLabel lbAmount = new JLabel("Amount of players:");
+        cbAmount 		= new JComboBox(playerAmounts);
+        
+        pp.add(lbAddress);
+        pp.add(tfAddress);
+        pp.add(lbPort);
+        pp.add(tfPort);
+        pp.add(lbName);
+        pp.add(tfName);
+        pp.add(lbAmount);
+        pp.add(cbAmount);
+        
+        bConnect = new JButton("Connect");
+        bConnect.addActionListener(this);
+
+        p1.add(pp, BorderLayout.WEST);
+        p1.add(bConnect, BorderLayout.EAST);
+        
+        Container cc = getContentPane();
+        cc.add(p1); 
 		
 		//Panel which contains 9 other panels
 		JPanel bordPanel = new JPanel(new GridLayout(3,3)); 
@@ -70,7 +142,17 @@ public class GUI extends JFrame implements ClientClient.Listener{
 		
 	}
 	
+	/**
+	 * Will display a String on the messageLabel
+	 * @param msg Message to be displayed
+	 */
 	public void displayMessage(String msg) {
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 }
