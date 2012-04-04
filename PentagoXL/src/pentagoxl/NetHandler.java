@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -85,9 +86,12 @@ public class NetHandler {
                     }
                     for (Listener l : NetHandler.this.listeners)
                         l.onReceive(cmd, args);
+                    
+                } catch (SocketException e) {
+                	break; //TODO fix, massive spam zonder deze catch als een client de verbinding verbreekt zonder quit
                 } catch (IOException e) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
-                }
+                } 
         }
     }
 
@@ -132,6 +136,6 @@ public class NetHandler {
     private void logMessage(String msg, boolean incoming) {
         String naam = getSocket().getInetAddress().toString();
         String toPrint = naam + (incoming ? " > " : " < ") + msg;
-        Server.logMessage(toPrint);
+        System.err.println(toPrint);
     }
 }

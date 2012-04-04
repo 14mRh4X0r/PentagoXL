@@ -18,12 +18,17 @@ public class ClientClient extends Client {
 	
 	private Bord bord;
 	private Speler[] spelers;
-	private int currentTurn;
-	private int myTurn;
-	private final static String[] SUPPORTEDCMDS = {};
+	public final static String[] SUPPORTEDCMDS = {};
 	
-	public ClientClient(NetHandler handler) {
+	/**
+	 * Constructs a new ClientClient, which uses handler to interact with a server
+	 * @param handler Hander to use to interact with server
+	 * @require handler != null
+	 * @require pentagoxl.ProtocolEndpoint.CMD_HELLO is sent, after which an ack has returned
+	 */
+	public ClientClient(String name, NetHandler handler) {
 		super(handler);
+		this.setNaam(name);
 	}
 
 	@Override
@@ -72,9 +77,6 @@ public class ClientClient extends Client {
 		for (int i = 0; i < args.length; i++) {
 			spelers[i] = new Speler(args[i]);
 			spelers[i].setVeld(Veld.byIndex(i));
-			if (args[i].equals(getNaam())) {
-				myTurn = i;
-			}
 		}
 		updateStart();
 		
@@ -83,14 +85,10 @@ public class ClientClient extends Client {
 	private void handleTurn(String[] args) {
 		if (spelers == null)
 			closeSocket();
-		for (int i = 0; i < spelers.length; i++) {
-			if (spelers[i].getNaam().equals(args[0])) {
-				currentTurn = i;
-			}
-		}
-		if (currentTurn == myTurn) {
+		if (this.getNaam().equals(args[0])) {
 			updateTurn();
 		}
+		
 		
 	}
 	
@@ -184,16 +182,18 @@ public class ClientClient extends Client {
 		return null;
 	}
 	
+	/*
 	/**
 	 * Sends a command to the server to join
 	 * @param naam Name to use when joining
-	 */
+	 *
 	public void sendHello(String naam) {
 		List<String> args = new ArrayList<String>();
 		args.add(naam);
 		args.addAll(Arrays.asList(SUPPORTEDCMDS));
 		HANDLER.addMessage(ProtocolEndpoint.CMD_HELLO, args.toArray(new String[0]));
 	}
+	*/
 	
 	/**
 	 * Send a move to the server. Does a clientside check whether the move is allowed.

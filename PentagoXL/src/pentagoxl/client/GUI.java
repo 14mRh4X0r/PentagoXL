@@ -2,102 +2,59 @@
 
 package pentagoxl.client;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
-import pentagoxl.NetHandler;
+import pentagoxl.ProtocolEndpoint;
 import pentagoxl.spel.Speler;
 import pentagoxl.spel.Veld;
 
 public class GUI extends JFrame implements ClientClient.Listener, ActionListener{
     
-	private ClientClient myClient;
-	private JButton     bConnect;
-    private JTextField  tfPort;
-    private JTextField 	tfAddress;
-    private JTextField	tfName;
-    private JComboBox	cbAmount;
-    
-    private static final String[] playerAmounts = {"Don't care", "2", "3", "4"};
+	private JButton buttons[];
 	
-	public GUI() {
+	private final ClientClient myClient;
+	
+	/**
+	 * Constructs a new GUI, this will use the specified ClientClient to interact with a server
+	 * @require client != null, client.HANDLER != null, connGUI != null
+	 * @require a ProtocolEndpoint.CMD_Hello and a ProtocolEndpoint.CMD_JOIN command have been issued to through client.HANDLER
+	 * @param client <tt>ClientClient</tt>-object to use to interact with a server
+	 * @param connGUI GUI to show when this windows closes
+	 * @ensure connGUI.getVisible == true after this window is closed
+	 */
+	public GUI(ClientClient client, final ConnectGUI connGUI) {
 		super("PentagoXL");
 		
 		buildGUI();
+		myClient = client;
 		
 		setVisible(true);
+		
+		myClient.addListener(this);
+		
+		addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+            	myClient.HANDLER.addMessage(ProtocolEndpoint.CMD_QUIT);
+                e.getWindow().dispose();
+            }
+            public void windowClosed(WindowEvent e) {
+                connGUI.setVisible(true);
+            }
+        }
+    	);
 	}
-	
-	/**
-	 * Connects to a server with given ip and port
-	 * @param ip ip to connect to
-	 * @param port port to connect to
-	 * @param naam Name to use when connecting
-	 */
-	public void connect(InetAddress ip, int port, String naam) {
-		try {
-			Socket sock = new Socket(ip, port);
-			NetHandler nh = new NetHandler(sock);
-			myClient = new ClientClient(nh);
-			myClient.sendHello(naam);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
-
-    public static void main(String[] args) {
-    	new GUI();
-    }
 	
 	private void buildGUI(){
 		setSize(600,420);		
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
-		//Connection panel
-		JPanel p1 = new JPanel(new FlowLayout());
-        JPanel pp = new JPanel(new GridLayout(4,2));     
-
-
-        JLabel lbAddress = new JLabel("Address: ");
-        tfAddress = new JTextField(12);
-
-        JLabel lbPort = new JLabel("Port:");
-        tfPort        = new JTextField(5);
-        
-        JLabel lbName = new JLabel("Name:");
-        tfName        = new JTextField(System.getProperty("user.name"), 12);
-        
-        JLabel lbAmount = new JLabel("Amount of players:");
-        cbAmount 		= new JComboBox(playerAmounts);
-        
-        pp.add(lbAddress);
-        pp.add(tfAddress);
-        pp.add(lbPort);
-        pp.add(tfPort);
-        pp.add(lbName);
-        pp.add(tfName);
-        pp.add(lbAmount);
-        pp.add(cbAmount);
-        
-        bConnect = new JButton("Connect");
-        bConnect.addActionListener(this);
-
-        p1.add(pp, BorderLayout.WEST);
-        p1.add(bConnect, BorderLayout.EAST);
-        
-        Container cc = getContentPane();
-        cc.add(p1); 
+		 
 		
 		//Panel which contains 9 other panels
 		JPanel bordPanel = new JPanel(new GridLayout(3,3)); 
@@ -111,7 +68,7 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 		}
 		
 		//Array which contains every button
-		JButton buttons[] = new JButton[81];
+		buttons = new JButton[81];
 		for (int i = 0; i < 81; i++) {
 			buttons[i] = new JButton(Veld.LEEG.toString());
 			hokPanels[i/9].add(buttons[i]);
@@ -121,18 +78,20 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 	@Override
 	public void doTurn() {
 		// TODO Auto-generated method stub
+		System.err.println("It's my turn!");
 		
 	}
 
 	@Override
 	public void gameStarting(Speler[] spelers) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void bordChanged() {
-		// TODO Auto-generated method stub
+		for (int i = 0; i < 81; i++) {
+			buttons[i].setText(myClient.getBord().getVeld(i).toString());
+		}
 		
 	}
 
