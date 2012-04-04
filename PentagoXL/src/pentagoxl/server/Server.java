@@ -166,18 +166,27 @@ public class Server extends Thread {
             List<Client> otherP = Server.getWaitingClients(numP);
             while (otherP.size() >= numP) {
                 Spel s = new Spel();
-                for (int i = 0; i < numP; i++)
-                    s.addClient(otherP.remove(0));
+                for (int i = 0; i < numP; i++) {
+                	Client c = otherP.remove(0);
+                	s.addClient(c);
+                	c.setSpel(s);
+                }
                 s.start();
             }
             if (otherP.size() + randP.size() >= numP) { //otherP.size() < numP
                 Spel s = new Spel();
-                for (int i = 0; i < otherP.size(); i++)
+                int otherPSize = otherP.size();
+                for (int i = 0; i < otherPSize; i++)
                 {
-                	s.addClient(otherP.remove(i));
+                	Client c = otherP.remove(0);
+                	s.addClient(c);
+                	c.setSpel(s);
                 }
-                while (s.getClients().size() < numP)
-                	s.addClient(randP.remove(0));
+                while (s.getClients().size() < numP) { //fill rest of game
+                	Client c = randP.remove(0);
+                	s.addClient(c);
+                	c.setSpel(s);
+                }
                 s.start();
             }
         }

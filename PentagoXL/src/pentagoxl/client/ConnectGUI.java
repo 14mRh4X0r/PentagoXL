@@ -123,8 +123,8 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
 				if (amountToPlayWith.equals(playerAmounts[0])) {
 					amountToPlayWith = "-1";
 				}
-				nh.addMessage(ProtocolEndpoint.CMD_JOIN, amountToPlayWith);
 				new GUI(new ClientClient(name, nh), this); //create a new GUI instance with a Client
+				nh.addMessage(ProtocolEndpoint.CMD_JOIN, amountToPlayWith);
 				this.setVisible(false);
 			}
 		} catch (UnknownHostException e) {
@@ -148,7 +148,7 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
 					int errCode = Integer.parseInt(args[0]);
 					nack = ProtocolError.lookupCode(errCode);
 				} catch (NumberFormatException e) {
-					nack = ProtocolError.UNEXPECTED_CMD;
+					nack = ProtocolError.UNSPECIFIED;
 				}
 			}
 			notifyAll();

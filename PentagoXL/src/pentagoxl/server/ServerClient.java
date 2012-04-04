@@ -9,7 +9,6 @@ import pentagoxl.ProtocolError;
 import pentagoxl.spel.Bord;
 
 public class ServerClient extends Client {
-    private int lastMove = -1, lastRotate = -1;
 
     public ServerClient(NetHandler handler) {
         super(handler);
@@ -124,25 +123,6 @@ public class ServerClient extends Client {
                 */
     }
 
-    @Override
-    public synchronized int[] doeZet(Bord bord) {
-        this.canMove = true;
-        int[] toRet = new int[]{-1,-1};
-        try {
-            this.wait(); // Wait for a MOVE
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ServerClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        toRet[0] = this.lastMove;
-        try {
-            this.wait(); // Wait for a ROTATE
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ServerClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        toRet[1] = this.lastRotate;
-        return toRet;
-    }
-
     private void handleHello(String[] args) {
         if (args == null || args[0].length() > 25
                 || args[0].equalsIgnoreCase(ProtocolEndpoint.SERVER_NAME))
@@ -199,24 +179,26 @@ public class ServerClient extends Client {
     }
 
     private void handleMove(String[] args) {
+    	int vak;
+    	try {
         if (args.length != 1)
             this.HANDLER.addNack(ProtocolError.INVALID_ARGUMENT_COUNT);
-        else if (!args[0].matches("[0-80]")) {
-            this.HANDLER.addNack(ProtocolError.INVALID_MOVE);
-            this.spel.kickClient(this);
+        else if (!((vak = Integer.parseInt(args[0])) < 81 && vak >= 0)) {
+            invalidnumber();
         } else {
             int vakje = Integer.parseInt(args[0]);
             if (!this.spel.getBord().isLeegVeld(vakje)) {
                 this.HANDLER.addNack(ProtocolError.INVALID_MOVE);
                 this.spel.kickClient(this);
+                System.err.println("Client kicked because not an empty field was entered");
             } else {
-                this.lastMove = vakje;
-                synchronized (this) {
-                    this.notifyAll();
-                }
+                this.spel.doeMove(vakje);
                 this.spel.broadcast(ProtocolEndpoint.BCST_MOVE, this.getNaam(), args[0]);
             }
         }
+    	} catch (NumberFormatException e) {
+    		invalidnumber();
+    	}
     }
 
     private void handleRotate(String[] args) {
@@ -228,12 +210,15 @@ public class ServerClient extends Client {
             this.HANDLER.addNack(ProtocolError.INVALID_MOVE);
             this.spel.kickClient(this);
         } else {
-            this.lastRotate = ((Integer.parseInt(args[0]) + 1)
-                    * (args[1].equals(ProtocolEndpoint.DIRECTION_CLOCKWISE) ? 1 : -1));
-            synchronized (this) {
-                this.notifyAll();
-            }
             this.spel.broadcast(ProtocolEndpoint.BCST_ROTATE, args[0], args[1]);
+            this.spel.doeRotate(((Integer.parseInt(args[0]) + 1)
+                    * (args[1].equals(ProtocolEndpoint.DIRECTION_CLOCKWISE) ? 1 : -1)));
         }
+    }
+    
+    private void invalidnumber() {
+        this.HANDLER.addNack(ProtocolError.INVALID_MOVE);
+        this.spel.kickClient(this);
+        System.err.println("Client kicked because not a number between 0 and 80 was entered");
     }
 }

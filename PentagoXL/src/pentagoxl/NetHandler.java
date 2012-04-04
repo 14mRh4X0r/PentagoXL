@@ -84,8 +84,11 @@ public class NetHandler {
                         for (int i = 1; i < cmdargs.length; i++)
                             args[i - 1] = cmdargs[i];
                     }
-                    for (Listener l : NetHandler.this.listeners)
-                        l.onReceive(cmd, args);
+                    synchronized (this) {
+                        for (Listener l : NetHandler.this.listeners) {
+                            l.onReceive(cmd, args);
+                        }
+					}
                     
                 } catch (SocketException e) {
                 	break; //TODO fix, massive spam zonder deze catch als een client de verbinding verbreekt zonder quit
@@ -120,8 +123,12 @@ public class NetHandler {
         addMessage(ProtocolEndpoint.SRV_NACK, error.getCode() + "");
     }
 
-    public void addListener(Listener l) {
+    public synchronized void addListener(Listener l) {
         listeners.add(l);
+    }
+    
+    public synchronized void removeListener(Listener l) {
+    	listeners.remove(l);
     }
 
     /**

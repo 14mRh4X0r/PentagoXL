@@ -28,7 +28,7 @@ public class Bord {
     }
 
     public Speler[] getWinnaars() {
-        return null;
+        return new Speler[0];
     }
 
     public boolean isLeegVeld(int i) {

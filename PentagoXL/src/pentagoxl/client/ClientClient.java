@@ -8,6 +8,7 @@ import java.util.List;
 import pentagoxl.Client;
 import pentagoxl.NetHandler;
 import pentagoxl.ProtocolEndpoint;
+import pentagoxl.ProtocolError;
 import pentagoxl.spel.Bord;
 import pentagoxl.spel.Speler;
 import pentagoxl.spel.Veld;
@@ -58,7 +59,15 @@ public class ClientClient extends Client {
 	}
 	
 	private void handleNack(String[] args) {
-		//IDC!
+		if (args[0].equals(ProtocolError.INVALID_MOVE.getCode() + "")) {
+			List<Speler> winnaars = new ArrayList<Speler>(spelers.length - 1);
+			for (Speler s : spelers) {
+				if (!s.getNaam().equals(this.getNaam())) {
+					winnaars.add(s);
+				}
+			}
+			updateGameOver((Speler[]) winnaars.toArray());
+		}
 	}
 	
 	private void closeSocket() {
@@ -110,10 +119,12 @@ public class ClientClient extends Client {
 	
 	private void handleGameOver(String[] args) {
 		List<Speler> winnaars = new ArrayList<Speler>(4);
-		for (String s : args) {
-			for (Speler sp : spelers) {
-				if (sp.getNaam().equals(s)) {
-					winnaars.add(sp);
+		if (args != null){
+			for (String s : args) {
+				for (Speler sp : spelers) {
+					if (sp.getNaam().equals(s)) {
+						winnaars.add(sp);
+					}
 				}
 			}
 		}
@@ -148,6 +159,10 @@ public class ClientClient extends Client {
 		listeners.add(listener);
 	}
 	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+	
 	/**
 	 * Listener interface for ClientClient
 	 * @author Wilco Wolters
@@ -173,27 +188,18 @@ public class ClientClient extends Client {
 		 */
 		public void gameOver(Speler[] winnaars);
 	}
-
-	/**
-	 * Not used clientside, so not implemented.
-	 */
-	@Override
-	public int[] doeZet(Bord bord) {
-		return null;
-	}
 	
-	/*
 	/**
 	 * Sends a command to the server to join
 	 * @param naam Name to use when joining
-	 *
+	 * @deprecated
+	 */
 	public void sendHello(String naam) {
 		List<String> args = new ArrayList<String>();
 		args.add(naam);
 		args.addAll(Arrays.asList(SUPPORTEDCMDS));
 		HANDLER.addMessage(ProtocolEndpoint.CMD_HELLO, args.toArray(new String[0]));
 	}
-	*/
 	
 	/**
 	 * Send a move to the server. Does a clientside check whether the move is allowed.

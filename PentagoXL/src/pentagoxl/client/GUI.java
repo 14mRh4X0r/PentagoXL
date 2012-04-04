@@ -2,11 +2,13 @@
 
 package pentagoxl.client;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
 
 import javax.swing.*;
 
@@ -17,8 +19,14 @@ import pentagoxl.spel.Veld;
 public class GUI extends JFrame implements ClientClient.Listener, ActionListener{
     
 	private JButton buttons[];
+	private JTextArea  playerLabel;
+	private JLabel  messageLabel;
 	
 	private final ClientClient myClient;
+	
+	public static final int AANTALHOKKEN = 9;
+	public static final int AANTALVAKKENPERHOK = 9;
+	public final static int AANTALVAKKEN = AANTALHOKKEN * AANTALVAKKENPERHOK;
 	
 	/**
 	 * Constructs a new GUI, this will use the specified ClientClient to interact with a server
@@ -29,7 +37,7 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 	 * @ensure connGUI.getVisible == true after this window is closed
 	 */
 	public GUI(ClientClient client, final ConnectGUI connGUI) {
-		super("PentagoXL");
+		super("PentagoXL > " + client.getNaam());
 		
 		buildGUI();
 		myClient = client;
@@ -52,44 +60,63 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 	
 	private void buildGUI(){
 		setSize(600,420);		
-		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		this.getContentPane().setLayout(new BorderLayout());
 		
 		 
 		
 		//Panel which contains 9 other panels
 		JPanel bordPanel = new JPanel(new GridLayout(3,3)); 
-		this.getContentPane().add(bordPanel);
+		this.getContentPane().add(bordPanel, BorderLayout.WEST);
 		
 		//Array of panels which will contain the balls
 		JPanel hokPanels[] = new JPanel[9];
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < AANTALHOKKEN; i++) {
 			hokPanels[i] = new JPanel(new GridLayout(3,3));
 			bordPanel.add(hokPanels[i]);
 		}
 		
 		//Array which contains every button
-		buttons = new JButton[81];
+		buttons = new JButton[AANTALVAKKEN];
 		for (int i = 0; i < 81; i++) {
 			buttons[i] = new JButton(Veld.LEEG.toString());
-			hokPanels[i/9].add(buttons[i]);
+			buttons[i].addActionListener(this);
+			buttons[i].setEnabled(false);
+			hokPanels[i/AANTALHOKKEN].add(buttons[i]);
 		}
+		
+		//Sidepanel
+		JPanel sidePanel = new JPanel(new BorderLayout());
+		playerLabel = new JTextArea("Spelers:");
+		playerLabel.setEditable(false);
+		messageLabel = new JLabel();
+		sidePanel.add(playerLabel, BorderLayout.NORTH);
+		sidePanel.add(messageLabel, BorderLayout.CENTER);
+		this.getContentPane().add(sidePanel, BorderLayout.EAST);
 	}
 
 	@Override
 	public void doTurn() {
-		// TODO Auto-generated method stub
-		System.err.println("It's my turn!");
+		for (int i = 0; i < AANTALVAKKEN; i++) {
+			if (myClient.getBord().getVeld(i) == Veld.LEEG) {
+				buttons[i].setEnabled(true);
+			}
+		}
+		messageLabel.setText("It's your turn!");
 		
 	}
 
 	@Override
 	public void gameStarting(Speler[] spelers) {
-		// TODO Auto-generated method stub
+		String playerLabelText = playerLabel.getText();
+		for (int i = 0; i < spelers.length; i++) {
+			playerLabelText += "\n" + spelers[i].getNaam() + ": " + Veld.byIndex(i).toString();
+		}
+		playerLabel.setText(playerLabelText);
 	}
 
 	@Override
 	public void bordChanged() {
-		for (int i = 0; i < 81; i++) {
+		for (int i = 0; i < AANTALVAKKEN; i++) {
 			buttons[i].setText(myClient.getBord().getVeld(i).toString());
 		}
 		
@@ -97,21 +124,44 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 
 	@Override
 	public void gameOver(Speler[] winnaars) {
-		// TODO Auto-generated method stub
+    	myClient.HANDLER.addMessage(ProtocolEndpoint.CMD_QUIT);
+    	String[] wins = new String[winnaars.length];
+    	boolean win = false;
+    	for (int i = 0; i < winnaars.length; i++) {
+    		wins[i] = winnaars[i].getNaam();
+    		if (wins[i].equals(this.getName())); {
+    			win = true;
+    		}
+    	}
+    	new GameOverGUI(wins, win);
+        dispose();
 		
 	}
 	
-	/**
-	 * Will display a String on the messageLabel
-	 * @param msg Message to be displayed
-	 */
-	public void displayMessage(String msg) {
-		
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		Object source = arg0.getSource();
+		for (int i = 0; i < AANTALVAKKEN; i++) {
+			if (buttons[i] == source) {
+				myClient.HANDLER.addMessage(ProtocolEndpoint.CMD_MOVE, i +"");
+				for (int j = 0; j < AANTALVAKKEN; j++) {
+					buttons[j].setEnabled(false);
+				}
+				messageLabel.setText("You should rotate now!");
+				new RotateGUI(this);
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Sends a rotate command to the server
+	 * @param vak Vak to rotate
+	 * @param direction Direction to rotate in
+	 * @require direction.equals("L") || direction.equals("R") 
+	 */
+	public void sendRotate(int vak, String direction){
+		String[] args = {vak + "", direction};
+		myClient.HANDLER.addMessage(ProtocolEndpoint.CMD_ROTATE, args);
 	}
 }
