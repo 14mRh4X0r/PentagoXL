@@ -1,20 +1,18 @@
 package pentagoxl.ai;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import pentagoxl.ProtocolEndpoint;
 import pentagoxl.spel.Bord;
 
-public class WilcoAI extends AI {
+public class RandomAI extends AI {
 
 	public static final String NAME = "WilcoAI";
 	
-	public WilcoAI(Socket sock, String playWith) {
+	public RandomAI(Socket sock, String playWith) {
 		super(NAME, sock, playWith);
 	}
 
@@ -40,7 +38,7 @@ public class WilcoAI extends AI {
 			try {
 				InetAddress ia = InetAddress.getByName(args[0]);
 				Socket sock = new Socket(ia, Integer.parseInt(args[1]));
-				new WilcoAI(sock, args[2]);
+				new RandomAI(sock, args[2]);
 			} catch (Exception e) {
 				usage();
 			}
