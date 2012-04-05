@@ -93,5 +93,10 @@ public abstract class AI implements NetHandler.Listener, ClientClient.Listener{
 		}
 		
 	}
+	
+	@Override
+	public void chatReceived(Speler whosaid, String text) {
+		//This is the amount of fucks I give
+	}
 
 }

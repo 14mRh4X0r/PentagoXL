@@ -3,6 +3,8 @@
 package pentagoxl.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,8 +21,12 @@ import pentagoxl.spel.Veld;
 public class GUI extends JFrame implements ClientClient.Listener, ActionListener{
     
 	private JButton buttons[];
-	private JTextArea  playerLabel;
+	private JTextArea playerLabel;
+	private JTextArea chatLabel;
+	private JTextField chatField;
 	private JLabel  messageLabel;
+	
+	private String chatText = "";
 	
 	private final ClientClient myClient;
 	
@@ -86,11 +92,23 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 		
 		//Sidepanel
 		JPanel sidePanel = new JPanel(new BorderLayout());
+		JPanel chatPanel = new JPanel(new FlowLayout());
+		JScrollPane chatScroll = new JScrollPane(chatPanel);
+		chatScroll.setMinimumSize(new Dimension(200, 300));
+		
+		/*chatLabel = new JTextArea();
+		chatLabel.setEditable(false);
+		chatField = new JTextField();
+		chatField.addActionListener(this);
+		chatPanel.add(chatField);
+		chatPanel.add(chatLabel);*/
+		
 		playerLabel = new JTextArea("Spelers:");
 		playerLabel.setEditable(false);
 		messageLabel = new JLabel();
 		sidePanel.add(playerLabel, BorderLayout.NORTH);
 		sidePanel.add(messageLabel, BorderLayout.CENTER);
+		sidePanel.add(chatScroll, BorderLayout.SOUTH);
 		this.getContentPane().add(sidePanel, BorderLayout.EAST);
 	}
 
@@ -163,5 +181,12 @@ public class GUI extends JFrame implements ClientClient.Listener, ActionListener
 	public void sendRotate(int vak, String direction){
 		String[] args = {vak + "", direction};
 		myClient.HANDLER.addMessage(ProtocolEndpoint.CMD_ROTATE, args);
+	}
+
+	@Override
+	public void chatReceived(Speler whosaid, String text) {
+		chatText += whosaid + ": " + text;
+		chatLabel.setText(chatText);
+		
 	}
 }
