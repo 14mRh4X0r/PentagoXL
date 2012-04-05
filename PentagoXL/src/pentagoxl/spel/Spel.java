@@ -10,7 +10,7 @@ import pentagoxl.ProtocolEndpoint;
 public class Spel extends Observable {
 
     private Bord bord;
-    private List<Client> clients;
+    private List<Client> clients = new ArrayList<Client>(4);
     private int zetIsAan;
     private boolean iemandKicked = false;
 
@@ -44,23 +44,22 @@ public class Spel extends Observable {
 
     public void doeMove(int plek) {
         Client aanDeBeurt = clients.get(zetIsAan);
-    	aanDeBeurt.canMove = false;
-    	aanDeBeurt.aantalKnikkers -= 1;
-    	aanDeBeurt.canRotate = true;
-    	if (isOver()) {
-    		broadCastWinnaars();
-    		removeSpelers();
-    	}
+        aanDeBeurt.canMove = false;
+        aanDeBeurt.aantalKnikkers -= 1;
+        aanDeBeurt.canRotate = true;
+        if (isOver()) {
+            broadCastWinnaars();
+            removeSpelers();
+        }
     }
 
     private void removeSpelers() {
-		for (Client c : clients) {
-			c.setSpel(null);
-		}
-		
-	}
+        for (Client c : clients)
+            c.setSpel(null);
 
-	/**
+    }
+
+    /**
      * Rotates one of the fields. <BR /> The fields are numbered: <BR /><tt> 1 |
      * 2 | 3 <BR /> 4 | 5 | 6 <BR /> 7 | 8 | 9 <BR /></tt> Negativeness is used
      * to rotate CCW.
@@ -74,11 +73,10 @@ public class Spel extends Observable {
         int hok = rotate * Integer.signum(rotate) - 1;
         boolean klokmee = Integer.signum(rotate) == 1;
         bord.getHok(hok).draai(klokmee);
-        if (!isOver() || bord.getWinnaars().length == 0) {
-        	speel();
-        } else {
-        	broadCastWinnaars();
-        }
+        if (!isOver() || bord.getWinnaars().length == 0)
+            speel();
+        else
+            broadCastWinnaars();
     }
 
     /**
@@ -90,10 +88,7 @@ public class Spel extends Observable {
         clients.remove(client);
         client.setSpel(null);
         String[] clientNames = new String[clients.size()];
-        for (int i = 0; i < clientNames.length; i++) {
-        	clientNames[i] = clients.get(i).getNaam();
-        }
-        this.broadcast(ProtocolEndpoint.BCST_GAMEOVER, clientNames);
+        this.broadcast(ProtocolEndpoint.BCST_GAMEOVER, this.getPlayerNames());
         removeSpelers();
     }
 
@@ -148,23 +143,22 @@ public class Spel extends Observable {
 
             broadcast(ProtocolEndpoint.BCST_STARTGAME, getPlayerNames());
 
-            
+
             speel();
         }
     }
-    
+
     private void broadCastWinnaars() {
         Speler[] winnaars = iemandKicked ? ((Client[]) clients.toArray()) : bord.getWinnaars();
         String[] winString = new String[winnaars.length];
-        if (bord.heeftWinnaar()) {
+        if (bord.heeftWinnaar())
             for (int i = 0; i < winnaars.length; i++)
                 winString[i] = winnaars[i].getNaam();
-        }
         broadcast(ProtocolEndpoint.BCST_GAMEOVER, winString);
     }
-    
+
     private void nextPlayer() {
-    	zetIsAan += 1;
-    	zetIsAan %= clients.size();
+        zetIsAan += 1;
+        zetIsAan %= clients.size();
     }
 }

@@ -74,7 +74,7 @@ public class NetHandler {
                 try {
                     String in = reader.readLine();
                     logMessage(in, true); // DEBUG
-                    if (in == null)
+                    if (in == null || in.matches("\\Q" + ProtocolEndpoint.DELIMITER + "\\E+"))
                         break; // LOLHAI
                     String[] cmdargs = ProtocolEndpoint.DELIMITER_PATTERN.split(in);
                     String cmd = cmdargs[0];
@@ -85,16 +85,21 @@ public class NetHandler {
                             args[i - 1] = cmdargs[i];
                     }
                     synchronized (this) {
-                        for (Listener l : NetHandler.this.listeners) {
+                        for (Listener l : NetHandler.this.listeners)
                             l.onReceive(cmd, args);
-                        }
-					}
-                    
+                    }
+
                 } catch (SocketException e) {
-                	break; //TODO fix, massive spam zonder deze catch als een client de verbinding verbreekt zonder quit
+                    break; //TODO fix, massive spam zonder deze catch als een client de verbinding verbreekt zonder quit
                 } catch (IOException e) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
-                } 
+                }
+            if (!socket.isClosed())
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    // dafuq
+                }
         }
     }
 
@@ -126,9 +131,9 @@ public class NetHandler {
     public synchronized void addListener(Listener l) {
         listeners.add(l);
     }
-    
+
     public synchronized void removeListener(Listener l) {
-    	listeners.remove(l);
+        listeners.remove(l);
     }
 
     /**
