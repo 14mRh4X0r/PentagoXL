@@ -149,7 +149,16 @@ public class Spel extends Observable {
     }
 
     private void broadCastWinnaars() {
-        Speler[] winnaars = iemandKicked ? ((Client[]) clients.toArray()) : bord.getWinnaars();
+    	Veld[] winVelden = bord.getWinnaars();
+    	List<Speler> winners = new ArrayList<Speler>();
+    	for (Veld v : winVelden) {
+    		for (Speler s : clients) {
+    			if (s.getVeld() == v) {
+    				winners.add(s);
+    			}
+    		}
+    	}
+        Speler[] winnaars = iemandKicked ? ((Client[]) clients.toArray()) : ((Speler[]) winners.toArray());
         String[] winString = new String[winnaars.length];
         if (bord.heeftWinnaar())
             for (int i = 0; i < winnaars.length; i++)
