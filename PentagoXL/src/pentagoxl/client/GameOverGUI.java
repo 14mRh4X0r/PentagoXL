@@ -17,6 +17,8 @@ public class GameOverGUI extends JFrame {
 		jta.setText(text);
 		this.getContentPane().add(jta);
 		
+		this.pack();
+		
 		this.setVisible(true);
 	}
 }

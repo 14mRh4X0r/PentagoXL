@@ -23,6 +23,7 @@ public class RotateGUI extends JFrame implements ActionListener{
 		super("PentagoXL > Rotate");
 		this.parent = parent;
 		buildGUI();
+		this.pack();
 		this.setVisible(true);
 		
 		addWindowListener(new WindowAdapter() {
