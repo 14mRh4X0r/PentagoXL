@@ -74,21 +74,74 @@ public class Bord {
     }
     
     private boolean heeftHorizontaal(Veld v) {
-		int maxOpvolgend = 0;    	
-    	for (int i = 0; i < VELDEN_PER_HOK; i++) {	
-    		for (int j = 0; j < VELDEN_PER_HOK; j++) {
-    			
+    	int maxOpvolgend = 0;
+    	for (int i = 0; i < VELDEN_PER_HOK; i++) {
+    		int opvolgend = 0;
+    		for (int j = 0; i < VELDEN_PER_HOK; i++) {
+    			int veldNummer = VELDEN * i + j;
+    			if (getVeld(convertVeld(veldNummer)) == v) {
+    				opvolgend += 1;
+    			} else {
+    				if (opvolgend > maxOpvolgend) {
+    					maxOpvolgend = opvolgend;
+    				}
+    				opvolgend = 0;
+    			}
     		}
     	}
-    	return false;
+    	return maxOpvolgend >= 5;
     }
     
     private boolean heeftVerticaal(Veld v) {
-    	return false;
+    	int maxOpvolgend = 0;
+    	for (int i = 0; i < VELDEN_PER_HOK; i++) {
+    		int opvolgend = 0;
+    		for (int j = 0; i < VELDEN_PER_HOK; i++) {
+    			int veldNummer = VELDEN * j + i;
+    			if (getVeld(convertVeld(veldNummer)) == v) {
+    				opvolgend += 1;
+    			} else {
+    				if (opvolgend > maxOpvolgend) {
+    					maxOpvolgend = opvolgend;
+    				}
+    				opvolgend = 0;
+    			}
+    		}
+    	}
+    	return maxOpvolgend >= 5;
     }
     
     private boolean heeftDiagonaal(Veld v) {
-    	return false;
+    	int maxOpvolgend = 0;
+    	for(int i = 0; i < VELDEN; i++) {
+    		int opvolgend = 0;
+    		if (i / 9 == 0 || i % 9 == 0) {
+    			int opvveld = 0;
+    			while (opvveld + 8 < VELDEN && opvveld % 9 != 8) {
+    				if (getVeld(convertVeld(opvveld)) == v) {
+    					opvveld += 8;
+    					opvolgend++;
+    				} else {
+    					if (opvolgend > maxOpvolgend) {
+    						maxOpvolgend = opvolgend;
+    					}
+    					opvolgend = 0;
+    				}
+    			}
+    			while (opvveld + 10 < VELDEN && opvveld % 9 != 8) {
+    				if (getVeld(convertVeld(opvveld)) == v) {
+    					opvveld += 10;
+    					opvolgend++;
+    				} else {
+    					if (opvolgend > maxOpvolgend) {
+    						maxOpvolgend = opvolgend;
+    					}
+    					opvolgend = 0;
+    				}
+    			}
+    		}
+    	}
+    	return maxOpvolgend >= 5;
     }
     
     /**
@@ -97,6 +150,7 @@ public class Bord {
      * @return A number based on the official numbering
      */
     public static int convertVeld(int v) {
+    	
     	return 0;
     }
 }
