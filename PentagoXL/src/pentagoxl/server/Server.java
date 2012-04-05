@@ -78,8 +78,11 @@ public class Server extends Thread {
 
             for (Iterator<Client> it = clientList.iterator(); it.hasNext();) {
                 Client c = it.next();
-                if (c.HANDLER == handler)
+                if (c.HANDLER == handler) {
+                    if (c.getSpel() != null)
+                        c.getSpel().kickClient(c);
                     it.remove();
+                }
             }
             handler.getSocket().close();
         } catch (IOException ex) {

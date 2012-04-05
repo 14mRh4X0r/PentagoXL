@@ -54,8 +54,10 @@ public class Spel extends Observable {
     }
 
     private void removeSpelers() {
-        for (Client c : clients)
+        for (Client c : clients) {
+            c.clientsInGame = 0;
             c.setSpel(null);
+        }
 
     }
 
@@ -73,7 +75,7 @@ public class Spel extends Observable {
         int hok = rotate * Integer.signum(rotate) - 1;
         boolean klokmee = Integer.signum(rotate) == 1;
         bord.getHok(hok).draai(klokmee);
-        if (!isOver() || bord.getWinnaars().length == 0)
+        if (!isOver())
             speel();
         else
             broadCastWinnaars();
@@ -87,7 +89,7 @@ public class Spel extends Observable {
     public void kickClient(Client client) {
         clients.remove(client);
         client.setSpel(null);
-        String[] clientNames = new String[clients.size()];
+        client.clientsInGame = 0;
         this.broadcast(ProtocolEndpoint.BCST_GAMEOVER, this.getPlayerNames());
         removeSpelers();
     }
@@ -111,7 +113,6 @@ public class Spel extends Observable {
         int alleKnikkers = 0;
         for (Client c : clients)
             alleKnikkers += c.aantalKnikkers;
-        System.err.println(alleKnikkers);
         return alleKnikkers == 0 || bord.heeftWinnaar() || iemandKicked;
     }
 
@@ -158,7 +159,7 @@ public class Spel extends Observable {
     			}
     		}
     	}
-        Speler[] winnaars = iemandKicked ? ((Client[]) clients.toArray()) : ((Speler[]) winners.toArray());
+        Speler[] winnaars = (iemandKicked ? clients : winners).toArray(new Speler[0]);
         String[] winString = new String[winnaars.length];
         if (bord.heeftWinnaar())
             for (int i = 0; i < winnaars.length; i++)
