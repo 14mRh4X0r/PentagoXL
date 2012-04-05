@@ -29,6 +29,8 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
     private boolean acked = false;
     private ProtocolError nack;
     private static final String[] playerAmounts = {"Don't care", "2", "3", "4"};
+    
+    public static final String[] SUPPORTEDCOMMANDS = {/*ProtocolEndpoint.CMD_CHAT*/};
 
     public ConnectGUI() {
         super("PentagoXL > Connect");
@@ -109,7 +111,12 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
             Socket sock = new Socket(host, port);
             NetHandler nh = new NetHandler(sock);
             nh.addListener(this);
-            nh.addMessage(ProtocolEndpoint.CMD_HELLO, name);
+            String[] nameAndCommands = new String[SUPPORTEDCOMMANDS.length + 1];
+            nameAndCommands[0] = name;
+            for (int i = 0; i < SUPPORTEDCOMMANDS.length; i++) {
+            	nameAndCommands[i+1] = SUPPORTEDCOMMANDS[i];
+            }
+            nh.addMessage(ProtocolEndpoint.CMD_HELLO, nameAndCommands);
             while (!acked && !nacked)
                 synchronized (this) {
                     this.wait();

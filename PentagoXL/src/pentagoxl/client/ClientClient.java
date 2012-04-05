@@ -46,6 +46,8 @@ public class ClientClient extends Client {
 			handleRotate(args);
 		} else if (ProtocolEndpoint.BCST_GAMEOVER.equals(cmd)) {
 			handleGameOver(args);
+		} else if (ProtocolEndpoint.BCST_CHAT.equals(cmd)) {
+			handleChat(args);
 		}
 
 	}
@@ -131,6 +133,22 @@ public class ClientClient extends Client {
 		updateGameOver(winnaars.toArray(new Speler[0]));
 	}
 	
+	private void handleChat(String[] args) {
+		if (args != null && args.length >= 2) {
+			Speler zegger = null;
+			for (Speler sp : spelers) {
+				if (sp.getNaam().equals(args[0]))
+					zegger = sp;
+			}
+			
+			if (zegger != null) {
+				for (Listener l : listeners) {
+					l.chatReceived(zegger, args[1]);
+				}
+			}
+		}
+	}
+	
 	private void updateTurn(){
 		for (Listener l : listeners) {
 			l.doTurn();
@@ -187,6 +205,12 @@ public class ClientClient extends Client {
 		 * @param winnaars Winners of the game.
 		 */
 		public void gameOver(Speler[] winnaars);
+		/**
+		 * Called when a chatmessage is received
+		 * @param whosaid Player who sent the message
+		 * @param text Text received as chat
+		 */
+		public void chatReceived(Speler whosaid, String text);
 	}
 	
 	/**
@@ -230,6 +254,10 @@ public class ClientClient extends Client {
 	 */
 	public void sendQuit() {
 		HANDLER.addMessage(ProtocolEndpoint.CMD_QUIT);
+	}
+	
+	public void sendChat(String message) {
+		HANDLER.addMessage(ProtocolEndpoint.CMD_CHAT, message);
 	}
 
 }
