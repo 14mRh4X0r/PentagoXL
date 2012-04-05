@@ -10,14 +10,13 @@ import pentagoxl.spel.Bord;
 
 public class WillemAI extends AI {
 
-    private int prevTurn;
-
     public WillemAI(Socket sock, String playWith, String name) {
         super(name, sock, playWith);
     }
 
     @Override
     public void doTurn() {
+        int prevTurn = 0;
         Bord b = myClient.getBord();
         while (!b.isLeegVeld(Bord.convertVeld(prevTurn)))
             prevTurn++;

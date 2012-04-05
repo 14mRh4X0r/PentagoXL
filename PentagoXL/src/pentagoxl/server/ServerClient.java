@@ -1,5 +1,8 @@
 package pentagoxl.server;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pentagoxl.Client;
@@ -10,8 +13,17 @@ import pentagoxl.spel.Bord;
 
 public class ServerClient extends Client {
 
+    private int caps = 0;
+    public static final int CHAT = 0x1;
+    public static final int CHALLENGE = 0x2;
+    public static final int ADMIN = 0x8;
+
     public ServerClient(NetHandler handler) {
         super(handler);
+    }
+
+    public int getCaps() {
+        return caps;
     }
 
     @Override
@@ -63,7 +75,14 @@ public class ServerClient extends Client {
             this.setNaam(args[0]);
             this.clientsInGame = 0;
             this.HANDLER.addMessage(ProtocolEndpoint.SRV_ACK);
-            // TODO: detect extra functions
+            List<String> capsList = new ArrayList<String>(Arrays.asList(args));
+            capsList.remove(0);
+            if (capsList.contains("CHAT"))
+                caps |= CHAT;
+            if (capsList.contains("CHALLENGE"))
+                caps |= CHALLENGE;
+            if (capsList.contains("1337"))
+                caps |= ADMIN;
         }
     }
 
@@ -78,8 +97,14 @@ public class ServerClient extends Client {
     }
 
     private void handleChat(String[] args) {
-        // TODO: implement chat
-        this.HANDLER.addNack(ProtocolError.COMMAND_UNSUPPORTED);
+        if (args == null || args.length != 1)
+            this.HANDLER.addNack(ProtocolError.INVALID_ARGUMENT_COUNT);
+        else if (args[0].length() > 1000)
+            this.HANDLER.addNack(ProtocolError.UNSPECIFIED);
+        else if (this.clientsInGame == 0)
+            Server.chat(this.getNaam(), args[0]);
+        else
+            this.spel.chat(this.getNaam(), args[0]);
     }
 
     private void handleList(String[] args) {
@@ -94,7 +119,7 @@ public class ServerClient extends Client {
     }
 
     private void handleJoin(String[] args) {
-        if (args.length != 1)
+        if (args == null || args.length != 1)
             this.HANDLER.addNack(ProtocolError.INVALID_ARGUMENT_COUNT);
         else if (!args[0].matches("-1|[2-4]"))
             this.HANDLER.addNack(ProtocolError.INCORRECT_PLAYER_AMOUNT);
@@ -110,7 +135,7 @@ public class ServerClient extends Client {
     }
 
     private void handleMove(String[] args) {
-        if (args.length != 1)
+        if (args == null || args.length != 1)
             this.HANDLER.addNack(ProtocolError.INVALID_ARGUMENT_COUNT);
         else if (!args[0].matches("[1-7]?[0-9]|80")) {
             this.HANDLER.addNack(ProtocolError.INVALID_MOVE);
@@ -129,7 +154,7 @@ public class ServerClient extends Client {
     }
 
     private void handleRotate(String[] args) {
-        if (args.length != 2)
+        if (args == null || args.length != 2)
             this.HANDLER.addNack(ProtocolError.INVALID_ARGUMENT_COUNT);
         else if (!args[0].matches("[0-8]")
                 || !(args[1].equals(ProtocolEndpoint.DIRECTION_CLOCKWISE)

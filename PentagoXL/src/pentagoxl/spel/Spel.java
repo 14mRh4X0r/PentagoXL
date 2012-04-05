@@ -2,10 +2,13 @@
 package pentagoxl.spel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import pentagoxl.Client;
 import pentagoxl.ProtocolEndpoint;
+import pentagoxl.server.Server;
+import pentagoxl.server.ServerClient;
 
 public class Spel extends Observable {
 
@@ -132,6 +135,13 @@ public class Spel extends Observable {
         this.new Runner().start();
     }
 
+    public void chat(String naam, String string) {
+        List<Client> toSend = new ArrayList<Client>(clients);
+        toSend.retainAll(Server.getClientsWithCaps(ServerClient.CHAT));
+        for (Client c : toSend)
+            c.HANDLER.addMessage(ProtocolEndpoint.BCST_CHAT, naam, string);
+    }
+
     private class Runner extends Thread {
 
         @Override
@@ -143,6 +153,7 @@ public class Spel extends Observable {
                 c.setVeld(Veld.byIndex(i));
             }
 
+            broadcast(ProtocolEndpoint.SRV_ACK);
             broadcast(ProtocolEndpoint.BCST_STARTGAME, getPlayerNames());
 
 

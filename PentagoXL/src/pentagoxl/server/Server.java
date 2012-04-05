@@ -6,12 +6,14 @@ package pentagoxl.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pentagoxl.Client;
 import pentagoxl.NetHandler;
+import pentagoxl.ProtocolEndpoint;
 import pentagoxl.spel.Spel;
 
 public class Server extends Thread {
@@ -19,8 +21,13 @@ public class Server extends Thread {
     private static boolean stop = false;
     private static int port;
     private static ServerSocket servSock;
-    private static List<Client> clientList = new ArrayList<Client>();
+    private static List<ServerClient> clientList = Collections.synchronizedList(new ArrayList<ServerClient>());
     private static Server instance;
+
+    static void chat(String naam, String string) {
+        for (Client c : getClientsWithCaps(ServerClient.CHAT))
+            c.HANDLER.addMessage(ProtocolEndpoint.BCST_CHAT, naam, string);
+    }
 
     /**
      * Creates an instance of Server, only needed for the run method.
@@ -76,7 +83,7 @@ public class Server extends Thread {
             if (clientList.isEmpty())
                 throw new IllegalArgumentException("There are no clients, wtf dude");
 
-            for (Iterator<Client> it = clientList.iterator(); it.hasNext();) {
+            for (Iterator<ServerClient> it = clientList.iterator(); it.hasNext();) {
                 Client c = it.next();
                 if (c.HANDLER == handler) {
                     if (c.getSpel() != null)
@@ -111,6 +118,21 @@ public class Server extends Thread {
             if (c.clientsInGame == optedIn)
                 toRet.add(c);
 
+        return toRet;
+    }
+    
+    /**
+     * Returns a list with clients which have certain capabilities.
+     * 
+     * @param caps The capabilities bit-flag
+     * @return A list with the clients.
+     */
+    public static List<Client> getClientsWithCaps(int caps) {
+        List<Client> toRet = new ArrayList<Client>(clientList.size());
+        for (ServerClient c : clientList)
+            if ((c.getCaps() & caps) != 0)
+                toRet.add(c);
+        
         return toRet;
     }
 

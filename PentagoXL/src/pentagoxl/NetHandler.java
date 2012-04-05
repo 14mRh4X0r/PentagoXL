@@ -66,31 +66,34 @@ public class NetHandler {
         private BufferedReader reader;
 
         public Processor() throws IOException {
-            this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()), 1035);
         }
 
         public void run() {
-            while (!socket.isClosed() && !socket.isInputShutdown())
+            boolean stop = false;
+            while (!socket.isClosed() && !socket.isInputShutdown() && !stop)
                 try {
                     String in = reader.readLine();
-                    logMessage(in, true); // DEBUG
+                    logMessage(in, true);
                     if (in == null || in.matches("\\Q" + ProtocolEndpoint.DELIMITER + "\\E+"))
-                        break; // LOLHAI
-                    String[] cmdargs = ProtocolEndpoint.DELIMITER_PATTERN.split(in);
-                    String cmd = cmdargs[0];
-                    String[] args = null;
-                    if (cmdargs.length > 1) {
-                        args = new String[cmdargs.length - 1];
-                        for (int i = 1; i < cmdargs.length; i++)
-                            args[i - 1] = cmdargs[i];
+                        stop = true; // LOLHAI
+                    else {
+                        String[] cmdargs = ProtocolEndpoint.DELIMITER_PATTERN.split(in);
+                        String cmd = cmdargs[0];
+                        String[] args = null;
+                        if (cmdargs.length > 1) {
+                            args = new String[cmdargs.length - 1];
+                            for (int i = 1; i < cmdargs.length; i++)
+                                args[i - 1] = cmdargs[i];
+                        }
+                        synchronized (this) {
+                            for (Listener l : NetHandler.this.listeners)
+                                l.onReceive(cmd, args);
+                        }
                     }
-                    synchronized (this) {
-                        for (Listener l : NetHandler.this.listeners)
-                            l.onReceive(cmd, args);
-                    }
-
-                } catch (SocketException e) {
-                    break; //TODO fix, massive spam zonder deze catch als een client de verbinding verbreekt zonder quit
+                } catch (OutOfMemoryError e) {
+                    Server.logMessage(socket.getInetAddress() + " filled our buffer, disconnecting");
+                    stop = true;
                 } catch (IOException e) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                 }
