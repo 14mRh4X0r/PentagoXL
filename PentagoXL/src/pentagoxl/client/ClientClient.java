@@ -66,7 +66,7 @@ public class ClientClient extends Client {
 					winnaars.add(s);
 				}
 			}
-			updateGameOver((Speler[]) winnaars.toArray());
+			updateGameOver(winnaars.toArray(new Speler[0]));
 		}
 	}
 	

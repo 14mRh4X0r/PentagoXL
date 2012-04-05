@@ -148,6 +148,6 @@ public class NetHandler {
     private void logMessage(String msg, boolean incoming) {
         String naam = getSocket().getInetAddress().toString();
         String toPrint = naam + (incoming ? " > " : " < ") + msg;
-        System.err.println(toPrint);
+        Server.logMessage(toPrint);
     }
 }
