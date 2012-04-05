@@ -34,6 +34,7 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
     public ConnectGUI() {
     	super("PentagoXL > Connect");
     	buildGUI();
+    	this.pack();
     	this.setVisible(true);
     	
     	addWindowListener(new WindowAdapter() {

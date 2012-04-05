@@ -9,11 +9,9 @@ import pentagoxl.ProtocolEndpoint;
 import pentagoxl.spel.Bord;
 
 public class RandomAI extends AI {
-
-	public static final String NAME = "WilcoAI";
 	
-	public RandomAI(Socket sock, String playWith) {
-		super(NAME, sock, playWith);
+	public RandomAI(Socket sock, String playWith, String name) {
+		super(name, sock, playWith);
 	}
 
 	@Override
@@ -34,11 +32,11 @@ public class RandomAI extends AI {
 	 * Usage: <ip> <port> <amountofplayerstoplaywith>
 	 */
 	public static void main(String[] args) {
-		if (args.length == 3 && (args[2].equals("-1") || args[2].equals("2") || args[2].equals("3") || args[2].equals("4"))) {		
+		if (args.length == 4 && (args[2].equals("-1") || args[2].equals("2") || args[2].equals("3") || args[2].equals("4"))) {		
 			try {
 				InetAddress ia = InetAddress.getByName(args[0]);
 				Socket sock = new Socket(ia, Integer.parseInt(args[1]));
-				new RandomAI(sock, args[2]);
+				new RandomAI(sock, args[2], args[3]);
 			} catch (Exception e) {
 				usage();
 			}
@@ -48,7 +46,7 @@ public class RandomAI extends AI {
 	}
 	
 	private static void usage(){
-		System.out.println("Usage: <ip> <port> <amountofplayerstoplaywith>");
+		System.out.println("Usage: <ip> <port> <amountofplayerstoplaywith> <name>");
 	}
 
 }
