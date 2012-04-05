@@ -49,10 +49,18 @@ public class Spel extends Observable {
     	aanDeBeurt.canRotate = true;
     	if (isOver()) {
     		broadCastWinnaars();
+    		removeSpelers();
     	}
     }
 
-    /**
+    private void removeSpelers() {
+		for (Client c : clients) {
+			c.setSpel(null);
+		}
+		
+	}
+
+	/**
      * Rotates one of the fields. <BR /> The fields are numbered: <BR /><tt> 1 |
      * 2 | 3 <BR /> 4 | 5 | 6 <BR /> 7 | 8 | 9 <BR /></tt> Negativeness is used
      * to rotate CCW.
@@ -80,13 +88,13 @@ public class Spel extends Observable {
      */
     public void kickClient(Client client) {
         clients.remove(client);
+        client.setSpel(null);
         String[] clientNames = new String[clients.size()];
         for (int i = 0; i < clientNames.length; i++) {
         	clientNames[i] = clients.get(i).getNaam();
         }
         this.broadcast(ProtocolEndpoint.BCST_GAMEOVER, clientNames);
-        for (Client c : this.getClients())
-            c.setSpel(null);
+        removeSpelers();
     }
 
     private void speel() {
