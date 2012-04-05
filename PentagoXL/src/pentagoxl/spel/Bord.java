@@ -97,6 +97,11 @@ public class Bord {
      * @return A number based on the official numbering
      */
     public static int convertVeld(int v) {
-    	return 0;
+        int hokRow = v / 27;
+        int vakRow = v % 27;
+        int linePos = v % 9;
+        int hokCol = linePos / 9;
+        int vakCol = linePos % 9;
+    	return VELDEN_PER_HOK * (3 * hokRow + hokCol) + 3 * vakRow + vakCol;
     }
 }
