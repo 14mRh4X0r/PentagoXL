@@ -122,9 +122,8 @@ public class ServerClient extends Client {
                 this.spel.kickClient(this);
                 Server.logMessage("Client kicked because a non-empty field was entered");
             } else {
-                this.spel.doeMove(vakje);
-                Server.logMessage("Lol NPE" + args[0] + ProtocolEndpoint.BCST_MOVE + this.getNaam() + spel);
                 this.spel.broadcast(ProtocolEndpoint.BCST_MOVE, this.getNaam(), args[0]);
+                this.spel.doeMove(vakje);
             }
         }
     }

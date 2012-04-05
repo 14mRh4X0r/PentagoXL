@@ -31,9 +31,11 @@ public class Bord {
 
     public Veld[] getWinnaars() {
         List<Veld> winnaars = new ArrayList<Veld>();
+
         for (Veld v : Veld.values())
-            if (heeftDiagonaal(v) || heeftVerticaal(v) || heeftHorizontaal(v))
+            if (v != Veld.LEEG && (heeftDiagonaal(v) || heeftVerticaal(v) || heeftHorizontaal(v)))
                 winnaars.add(v);
+        Server.logMessage(winnaars.toString());
         return winnaars.toArray(new Veld[0]);
     }
 
@@ -79,13 +81,15 @@ public class Bord {
             for (int j = 0; j < VELDEN_PER_HOK; j++) {
                 int veldNummer = VELDEN_PER_HOK * i + j;
                 if (getVeld(convertVeld(veldNummer)) == v)
-                    opvolgend += 1;
+                    opvolgend++;
                 else {
                     if (opvolgend > maxOpvolgend)
                         maxOpvolgend = opvolgend;
                     opvolgend = 0;
                 }
             }
+            if (opvolgend > maxOpvolgend)
+                maxOpvolgend = opvolgend;
         }
         return maxOpvolgend >= 5;
     }
@@ -97,13 +101,15 @@ public class Bord {
             for (int j = 0; j < VELDEN_PER_HOK; j++) {
                 int veldNummer = VELDEN_PER_HOK * j + i;
                 if (getVeld(convertVeld(veldNummer)) == v)
-                    opvolgend += 1;
+                    opvolgend++;
                 else {
                     if (opvolgend > maxOpvolgend)
                         maxOpvolgend = opvolgend;
                     opvolgend = 0;
                 }
             }
+            if (opvolgend > maxOpvolgend)
+                maxOpvolgend = opvolgend;
         }
         return maxOpvolgend >= 5;
     }

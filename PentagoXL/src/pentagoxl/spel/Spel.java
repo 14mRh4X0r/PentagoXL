@@ -45,6 +45,7 @@ public class Spel extends Observable {
     public void doeMove(int plek) {
         Client aanDeBeurt = clients.get(zetIsAan);
         aanDeBeurt.canMove = false;
+        bord.doeMove(aanDeBeurt.getVeld(), plek);
         aanDeBeurt.aantalKnikkers -= 1;
         aanDeBeurt.canRotate = true;
         if (isOver()) {
@@ -150,15 +151,12 @@ public class Spel extends Observable {
     }
 
     private void broadCastWinnaars() {
-    	Veld[] winVelden = bord.getWinnaars();
-    	List<Speler> winners = new ArrayList<Speler>();
-    	for (Veld v : winVelden) {
-    		for (Speler s : clients) {
-    			if (s.getVeld() == v) {
-    				winners.add(s);
-    			}
-    		}
-    	}
+        Veld[] winVelden = bord.getWinnaars();
+        List<Speler> winners = new ArrayList<Speler>();
+        for (Veld v : winVelden)
+            for (Speler s : clients)
+                if (s.getVeld() == v)
+                    winners.add(s);
         Speler[] winnaars = (iemandKicked ? clients : winners).toArray(new Speler[0]);
         String[] winString = new String[winnaars.length];
         if (bord.heeftWinnaar())
