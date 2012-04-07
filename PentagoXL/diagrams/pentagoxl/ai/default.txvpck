@@ -5,15 +5,24 @@
         <property name="@__options" value=""/>
         <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.ai.AI">
             <property name="$shortcutReference" value="true"/>
-            <property name="bounds" value="51,26,83,98"/>
+            <property name="bounds" value="51,26,136,174"/>
         </reference>
-        <reference df-class-name="reference10" referencedUin="jdt:e_class:src:pentagoxl.ai.AIImplementation">
+        <reference df-class-name="reference9" referencedUin="jdt:e_class:src:pentagoxl.ai.WillemAI">
             <property name="$shortcutReference" value="true"/>
-            <property name="bounds" value="207,35,111,82"/>
-            <reference referencedUin="jdt:l_gnt:src:pentagoxl.ai.AIImplementation:pentagoxl.ai.AI">
-                <property name="sourceAnchor" value="207,76"/>
+            <property name="bounds" value="630,280,83,117"/>
+            <reference referencedUin="jdt:l_gnt:src:pentagoxl.ai.WillemAI:pentagoxl.ai.AI">
+                <property name="sourceAnchor" value="671,280"/>
                 <property name="bendpoints" value=""/>
-                <property name="targetAnchor" value="134,76"/>
+                <property name="targetAnchor" value="119,200"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference10" referencedUin="jdt:e_class:src:pentagoxl.ai.RandomAI">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="624,130,83,117"/>
+            <reference referencedUin="jdt:l_gnt:src:pentagoxl.ai.RandomAI:pentagoxl.ai.AI">
+                <property name="sourceAnchor" value="624,165"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="187,165"/>
             </reference>
         </reference>
         <property name="$defaultDiagram" value=""/>

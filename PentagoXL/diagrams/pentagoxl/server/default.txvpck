@@ -5,7 +5,17 @@
         <property name="@__options" value=""/>
         <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.server.Server">
             <property name="$shortcutReference" value="true"/>
-            <property name="bounds" value="30,33,83,117"/>
+            <property name="bounds" value="30,33,143,238"/>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.server.Server:instance">
+                <property name="sourceAnchor" value="145,271"/>
+                <property name="bendpoints" value="145,309,211,309,211,243"/>
+                <property name="targetAnchor" value="173,243"/>
+                <property name="bounds_setted_by_user" value="true"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference8" referencedUin="jdt:e_class:src:pentagoxl.server.ServerClient">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="340,30,200,334"/>
         </reference>
         <property name="$defaultDiagram" value=""/>
     </view>

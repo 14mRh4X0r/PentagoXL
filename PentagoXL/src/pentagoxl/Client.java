@@ -17,6 +17,7 @@ public abstract class Client extends Speler implements NetHandler.Listener {
     
     /** The <tt>NetHandler</tt> for this client. */
     public final NetHandler HANDLER;
+    
     /**
      * Holds with how many other players this client wants to play a game. <BR />
      * This should be 0 when this client is waiting in the lobby. <BR />

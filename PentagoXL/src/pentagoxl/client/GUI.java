@@ -10,8 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
-
 import javax.swing.*;
 
 import pentagoxl.ProtocolEndpoint;
@@ -20,10 +18,11 @@ import pentagoxl.spel.Veld;
 
 public class GUI extends JFrame implements ClientClient.Listener, ActionListener{
     
+
+	private static final long serialVersionUID = -8973044970723143704L;
 	private JButton buttons[];
 	private JTextArea playerLabel;
 	private JTextArea chatLabel;
-	private JTextField chatField;
 	private JLabel  messageLabel;
 	
 	private String chatText = "";

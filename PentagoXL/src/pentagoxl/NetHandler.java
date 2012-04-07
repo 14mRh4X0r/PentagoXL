@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -14,12 +13,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import pentagoxl.server.Server;
 
+/**
+ * Class which handles sending and receiving messages between server and client
+ *
+ */
 public class NetHandler {
 
     private Socket socket;
     private Sender mySender;
     private List<Listener> listeners;
 
+    /**
+     * Creates a new <tt>NetHandler</tt> which uses <tt>sock</tt> to communicate with a server
+     * @param sock <tt>Socket</tt> to use to communicate with a server
+     * @require sock != null
+     * @throws IOException
+     * @ensure this.getSocket() == sock
+     */
     public NetHandler(Socket sock) throws IOException {
         this.socket = sock;
         mySender = new Sender();
@@ -106,11 +116,27 @@ public class NetHandler {
         }
     }
 
+    /**
+     * Listener interface for <tt>NetHandler</tt> <br>
+     * Contains a method to use in a MVC-environment
+     *
+     */
     public static interface Listener {
 
+    	/**
+    	 * This is called when a message from the server is received. <br>
+    	 * @param cmd Command received
+    	 * @param args Arguments received
+    	 */
         public void onReceive(String cmd, String[] args);
     }
 
+    /**
+     * Sends a message over the socket.
+     * @param cmd Command to send
+     * @param args arguments to send with the command
+     * @see ProtocolEndpoint
+     */
     public void addMessage(String cmd, String... args) {
         String message = cmd;
         for (String s : args) {
@@ -131,10 +157,18 @@ public class NetHandler {
         addMessage(ProtocolEndpoint.SRV_NACK, error.getCode() + "");
     }
 
+    /**
+     * Adds a <tt>Listener</tt> to this observer
+     * @param l Listener to be added
+     */
     public synchronized void addListener(Listener l) {
         listeners.add(l);
     }
 
+    /**
+     * removes a <tt>Listener</tt> from this observer 
+     * @param l Listener to be removed
+     */
     public synchronized void removeListener(Listener l) {
         listeners.remove(l);
     }

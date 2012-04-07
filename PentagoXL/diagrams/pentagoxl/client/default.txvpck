@@ -5,7 +5,33 @@
         <property name="@__options" value=""/>
         <reference df-class-name="reference" referencedUin="jdt:e_class:src:pentagoxl.client.GUI">
             <property name="$shortcutReference" value="true"/>
-            <property name="bounds" value="38,26,83,149"/>
+            <property name="bounds" value="38,26,179,302"/>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.client.GUI:myClient">
+                <property name="sourceAnchor" value="217,312"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="372,312"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference1" referencedUin="jdt:e_class:src:pentagoxl.client.GameOverGUI">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="466,31,101,101"/>
+        </reference>
+        <reference df-class-name="reference2" referencedUin="jdt:e_class:src:pentagoxl.client.RotateGUI">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="578,143,137,174"/>
+            <reference referencedUin="jdt:l_ast:src:pentagoxl.client.RotateGUI:parent">
+                <property name="sourceAnchor" value="578,230"/>
+                <property name="bendpoints" value=""/>
+                <property name="targetAnchor" value="217,230"/>
+            </reference>
+        </reference>
+        <reference df-class-name="reference3" referencedUin="jdt:e_class:src:pentagoxl.client.ConnectGUI">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="726,291,200,350"/>
+        </reference>
+        <reference df-class-name="reference4" referencedUin="jdt:e_class:src:pentagoxl.client.ClientClient">
+            <property name="$shortcutReference" value="true"/>
+            <property name="bounds" value="372,297,188,494"/>
         </reference>
         <property name="$defaultDiagram" value=""/>
     </view>

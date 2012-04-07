@@ -12,14 +12,15 @@ import java.net.UnknownHostException;
 
 import javax.swing.*;
 
-import pentagoxl.spel.Speler;
 import pentagoxl.NetHandler;
 import pentagoxl.ProtocolEndpoint;
 import pentagoxl.ProtocolError;
 
 public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionListener {
 
-    private JButton bConnect;
+
+	private static final long serialVersionUID = -3335880643464593642L;
+	private JButton bConnect;
     private JTextField tfPort;
     private JTextField tfAddress;
     private JTextField tfName;
@@ -32,6 +33,9 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
     
     public static final String[] SUPPORTEDCOMMANDS = {/*ProtocolEndpoint.CMD_CHAT*/};
 
+    /**
+     * Constructs a new <tt>ConnectGUI</tt>, builds the GUI and sets the visibility to true.
+     */
     public ConnectGUI() {
         super("PentagoXL > Connect");
         buildGUI();
@@ -93,6 +97,10 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
         cc.add(p1);
     }
 
+    /**
+     * Tries to connect to the server when the connect button is clicked. <br>
+     * Will display an error message when failed.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == bConnect)
@@ -143,6 +151,9 @@ public class ConnectGUI extends JFrame implements NetHandler.Listener, ActionLis
         nacked = false;
     }
 
+    /**
+     * Checks whether a nack or an ack is received when connecting to a server
+     */
     @Override
     public synchronized void onReceive(String cmd, String[] args) {
         if (cmd.equals(ProtocolEndpoint.SRV_NACK)) {

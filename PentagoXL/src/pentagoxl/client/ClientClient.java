@@ -21,18 +21,19 @@ public class ClientClient extends Client {
     public final static String[] SUPPORTEDCMDS = {};
 
     /**
-     * Constructs a new ClientClient, which uses handler to interact with a
-     * server
-     *
-     * @param handler Hander to use to interact with server @require handler !=
-     * null @require pentagoxl.ProtocolEndpoint.CMD_HELLO is sent, after which
-     * an ack has returned
+     * Constructs a new ClientClient, which uses handler to interact with a server
+     * @param handler Hander to use to interact with server 
+     * @require handler != null
+     * @require pentagoxl.ProtocolEndpoint.CMD_HELLO is sent, after which an ack has returned
      */
     public ClientClient(String name, NetHandler handler) {
         super(handler);
         this.setNaam(name);
     }
 
+    /**
+     * Sends any commands it receives from handler to its listeners.
+     */
     @Override
     public void onReceive(String cmd, String[] args) {
         if (ProtocolEndpoint.SRV_NACK.equals(cmd))
@@ -55,12 +56,15 @@ public class ClientClient extends Client {
     /**
      * Returns a deepcopy of the bord used by this client
      *
-     * @return A deepcopy of this bord
+     * @return A deepcopy of bord
      */
     public Bord getBord() {
         return bord.deepcopy();
     }
 
+    /*
+     * Checks whether a ProtocolError.INVALID_MOVE was received, updates every listener if it was.
+     */
     private void handleNack(String[] args) {
         if (args[0].equals(ProtocolError.INVALID_MOVE.getCode() + "")) {
             List<Speler> winnaars = new ArrayList<Speler>(spelers.length - 1);
@@ -71,6 +75,9 @@ public class ClientClient extends Client {
         }
     }
 
+    /*
+     * Stops the connection
+     */
     private void closeSocket() {
         try {
             HANDLER.getSocket().close();
@@ -79,6 +86,9 @@ public class ClientClient extends Client {
         }
     }
 
+    /*
+     * Sets a Veld for every other player.
+     */
     private void handleStartGame(String[] args) {
         bord = new Bord();
         if (args.length > 4 || args.length < 2)
@@ -92,6 +102,10 @@ public class ClientClient extends Client {
 
     }
 
+    /*
+     * Closes the socket if this this.spelers == null
+     * executes updateTurn if the argument received was this.getNaam()
+     */
     private void handleTurn(String[] args) {
         if (spelers == null)
             closeSocket();
@@ -101,6 +115,10 @@ public class ClientClient extends Client {
 
     }
 
+    /*
+     * Sets the move received on the bord.
+     * updateBord() afterwards
+     */
     private void handleMove(String[] args) {
         for (Speler s : spelers)
             if (s.getNaam().equals(args[0]))
@@ -108,6 +126,10 @@ public class ClientClient extends Client {
         updateBord();
     }
 
+    /*
+     * Sets the rotate received on the bord.
+     * updateBord() afterwards
+     */
     private void handleRotate(String[] args) {
         int vak = Integer.parseInt(args[0]) + 1;
         vak *= (args[1].equals(ProtocolEndpoint.DIRECTION_COUNTERCLOCKWISE) ? -1 : 1);
@@ -115,6 +137,9 @@ public class ClientClient extends Client {
         updateBord();
     }
 
+    /*
+     * Adds every argument to an array and updateGameOver(array) afterwards
+     */
     private void handleGameOver(String[] args) {
         List<Speler> winnaars = new ArrayList<Speler>(4);
         if (args != null)
@@ -125,6 +150,9 @@ public class ClientClient extends Client {
         updateGameOver(winnaars.toArray(new Speler[0]));
     }
 
+    /*
+     * Puts args[0] to a player, then updates every listener with chatReceived(speler, args[1])
+     */
     private void handleChat(String[] args) {
         if (args != null && args.length >= 2) {
             Speler zegger = null;
@@ -138,21 +166,33 @@ public class ClientClient extends Client {
         }
     }
 
+    /*
+     * updates every listener with doTurn()
+     */
     private void updateTurn() {
         for (Listener l : listeners)
             l.doTurn();
     }
 
+    /*
+     * updates every listener with gameStarting(spelers)
+     */
     private void updateStart() {
         for (Listener l : listeners)
             l.gameStarting(spelers);
     }
 
+    /*
+     * updates every listener with bordChanged()
+     */
     private void updateBord() {
         for (Listener l : listeners)
             l.bordChanged();
     }
 
+    /*
+     * updates every listener with gameOver(winnaars)
+     */
     private void updateGameOver(Speler[] winnaars) {
         for (int i = 0; i < listeners.size(); i++) {
             Listener l = listeners.get(i);
@@ -160,10 +200,18 @@ public class ClientClient extends Client {
         }
     }
 
+    /**
+     * Adds <tt>listener</tt> to the list which will be updated with every method in onReceive 
+     * @param listener Listener to be added
+     */
     public void addListener(Listener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Removes <tt>listener</tt> from the list which will be updated with every method in onReceive
+     * @param listener Listener to be added
+     */
     public void removeListener(Listener listener) {
         listeners.remove(listener);
     }
@@ -224,8 +272,7 @@ public class ClientClient extends Client {
 
     /**
      * Send a move to the server. Does a clientside check whether the move is
-     * allowed.
-     *
+     * allowed. <BR> (<tt>That is, getBord().isLeegVeld(vak)</tt>)
      * @param vak Where to place the move.
      * @return true when move is allowed
      */
@@ -255,6 +302,10 @@ public class ClientClient extends Client {
         HANDLER.addMessage(ProtocolEndpoint.CMD_QUIT);
     }
 
+    /**
+     * Sends a chat message to the server
+     * @param message Message to be sent
+     */
     public void sendChat(String message) {
         HANDLER.addMessage(ProtocolEndpoint.CMD_CHAT, message);
     }

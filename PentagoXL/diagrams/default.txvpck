@@ -6,7 +6,7 @@
         <reference df-class-name="reference" referencedUin="design:view:::id7qxscgztx6wfcgztx8ams">
             <property name="$shortcutReference" value="true"/>
             <property name="@__fqn" value="uml:package:PentagoXL:src:pentagoxl"/>
-            <property name="bounds" value="54,19,84,177"/>
+            <property name="bounds" value="54,19,115,193"/>
         </reference>
         <property name="$defaultDiagram" value=""/>
     </view>

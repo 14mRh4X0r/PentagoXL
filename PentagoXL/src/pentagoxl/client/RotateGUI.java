@@ -1,7 +1,5 @@
 package pentagoxl.client;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +11,8 @@ import javax.swing.*;
 import pentagoxl.ProtocolEndpoint;
 
 public class RotateGUI extends JFrame implements ActionListener{
-	
+
+	private static final long serialVersionUID = -1856060431477840989L;
 	private final GUI parent;
 	private JButton[] buttons;
 	

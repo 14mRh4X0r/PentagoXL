@@ -14,6 +14,10 @@ public class RandomAI extends AI {
 		super(name, sock, playWith);
 	}
 
+	/**
+	 * Sends a move and a rotate to the server.
+	 * The moves are randomly chosen
+	 */
 	@Override
 	public void doTurn() {
 		Bord b = myClient.getBord();

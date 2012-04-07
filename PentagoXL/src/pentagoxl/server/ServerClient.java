@@ -3,13 +3,10 @@ package pentagoxl.server;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pentagoxl.Client;
 import pentagoxl.NetHandler;
 import pentagoxl.ProtocolEndpoint;
 import pentagoxl.ProtocolError;
-import pentagoxl.spel.Bord;
 
 public class ServerClient extends Client {
 
