@@ -2,9 +2,6 @@ package pentagoxl.ai;
 
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-
 import pentagoxl.ProtocolEndpoint;
 import pentagoxl.spel.Bord;
 

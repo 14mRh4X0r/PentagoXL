@@ -32,7 +32,7 @@ public class Spel extends Observable {
     }
 
     /**
-     * Returns a list of clients connec
+     * Returns a list of connected clients
      *
      * @return
      */
